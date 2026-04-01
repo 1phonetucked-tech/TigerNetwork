@@ -30,3 +30,43 @@
 
 </body>
 </html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TigerNet</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <!-- optional: your top-right TigerNet logo -->
+  <div class="tn-header">
+    <a class="tn-logo" href="./">
+      <img src="./tigernet.png" alt="TigerNet" />
+    </a>
+  </div>
+
+  <!-- MS-paint-ish tool rail -->
+  <div class="tools" aria-label="tools">
+    <button class="tool active" data-tool="box" title="Box">□</button>
+    <button class="tool" data-tool="pen" title="Pen">✎</button>
+    <button class="tool" data-tool="erase" title="Eraser">⌫</button>
+
+    <div class="divider"></div>
+
+    <input id="color" type="color" value="#111111" title="Color" />
+    <input id="size" type="range" min="1" max="22" value="3" title="Size" />
+
+    <div class="divider"></div>
+
+    <button id="clear" class="tool danger" title="Clear">×</button>
+  </div>
+
+  <!-- drawing surface -->
+  <canvas id="canvas"></canvas>
+
+  <script src="./app.js"></script>
+</body>
+</html>
+``
