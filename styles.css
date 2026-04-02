@@ -132,6 +132,7 @@ footer{ display: none; } /* if any platform injects one */
   stroke-linejoin: round;
 }
 
-#svg {
+/* cursor for each tool */
+* {
   cursor: url("./Picture1.png") 16 16, auto;
 }
