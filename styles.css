@@ -129,8 +129,10 @@ footer{ display: none; } /* if any platform injects one */
   stroke-linejoin: round;
 }
 
-/* cat cursor everywhere */
-html, body, #svg, .tools, .tools * {
-  cursor: url("./Picture1.png") 16 16, auto !important;
+html,
+body,
+#svg,
+.tools,
+.tools * {
+  cursor: url("./Picture1-32.png") 16 16, auto !important;
 }
-
