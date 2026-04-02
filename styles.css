@@ -38,7 +38,7 @@ footer{ display: none; } /* if any platform injects one */
 
 .tn-logo img{
   width: auto;
-  max-width: 160px;   /* change this safely */
+  max-width: 200px;   /* change this safely */
   height: auto;
   display: block;
   opacity: 0.9;
