@@ -134,5 +134,5 @@ body,
 #svg,
 .tools,
 .tools * {
-  cursor: url("./32-32.png") 16 16, auto !important;
+  cursor: url("./32.png") 0 0, auto !important;
 }
