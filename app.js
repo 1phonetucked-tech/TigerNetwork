@@ -1,48 +1,55 @@
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
+// ---- DOM ----
+const svg = document.getElementById("svg");
 const toolButtons = document.querySelectorAll(".tool[data-tool]");
 const colorInput = document.getElementById("color");
-const sizeInput = document.getElementById("size");
-const clearBtn = document.getElementById("clear");
+const sizeInput  = document.getElementById("size");
+const clearBtn   = document.getElementById("clear");
 
+const NS = "http://www.w3.org/2000/svg";
+
+// ---- State ----
 let tool = "box";
 let drawing = false;
 
-let start = null;            // for box drag
-let last = null;             // for pen/eraser
 let strokeColor = colorInput.value;
-let strokeSize = parseInt(sizeInput.value, 10);
+let strokeSize  = parseInt(sizeInput.value, 10);
 
-// keep a lightweight “preview” for box while dragging
-let snapshot = null;
+let start = null;        // for box drag
+let current = null;      // current element (g for box, path for pen)
 
-function resizeCanvas(){
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width  = Math.floor(window.innerWidth * dpr);
-  canvas.height = Math.floor(window.innerHeight * dpr);
-  canvas.style.width = window.innerWidth + "px";
-  canvas.style.height = window.innerHeight + "px";
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // draw in CSS pixels
+// ---- helpers ----
+function svgEl(tag, attrs = {}) {
+  const el = document.createElementNS(NS, tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
 }
-resizeCanvas();
-window.addEventListener("resize", () => {
-  // NOTE: resizing clears canvas; for now that’s fine in v1 tools-first
-  resizeCanvas();
-});
+
+function pos(e){
+  const r = svg.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+
+function normRect(a, b){
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  const w = Math.abs(a.x - b.x);
+  const h = Math.abs(a.y - b.y);
+  return { x, y, w, h };
+}
 
 function setActive(btn){
   toolButtons.forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
 }
 
+// ---- Tool UI (kept!) ----
 toolButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     tool = btn.dataset.tool;
     setActive(btn);
-    canvas.style.cursor = (tool === "box") ? "crosshair"
-                      : (tool === "pen") ? "crosshair"
-                      : "cell";
+
+    svg.style.cursor =
+      tool === "erase" ? "cell" : "crosshair";
   });
 });
 
@@ -55,108 +62,124 @@ sizeInput.addEventListener("input", () => {
 });
 
 clearBtn.addEventListener("click", () => {
-  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  svg.innerHTML = "";
 });
 
-function pos(e){
-  const r = canvas.getBoundingClientRect();
-  return { x: e.clientX - r.left, y: e.clientY - r.top };
-}
-
-function takeSnapshot(){
-  snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-}
-function restoreSnapshot(){
-  if (!snapshot) return;
-  ctx.putImageData(snapshot, 0, 0);
-}
-
-function drawLine(a, b, color, size){
-  ctx.save();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = size;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  ctx.beginPath();
-  ctx.moveTo(a.x, a.y);
-  ctx.lineTo(b.x, b.y);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function eraseAt(p, size){
-  ctx.save();
-  ctx.globalCompositeOperation = "destination-out";
-  ctx.beginPath();
-  ctx.arc(p.x, p.y, Math.max(6, size * 2.2), 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-}
-
-function normRect(a, b){
-  const x = Math.min(a.x, b.x);
-  const y = Math.min(a.y, b.y);
-  const w = Math.abs(a.x - b.x);
-  const h = Math.abs(a.y - b.y);
-  return { x, y, w, h };
-}
-
-function fillRect(r, fill){
-  ctx.save();
-  ctx.fillStyle = fill;
-  ctx.strokeStyle = "rgba(0,0,0,0.12)";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.roundRect(r.x, r.y, r.w, r.h, 10);
-  ctx.fill();
-  ctx.stroke();
-  ctx.restore();
-}
-
-// pointer events (works for mouse + touch)
-canvas.addEventListener("pointerdown", (e) => {
+// ---- Drawing logic ----
+svg.addEventListener("pointerdown", (e) => {
+  // Only interact when clicking on the SVG surface
   drawing = true;
-  canvas.setPointerCapture(e.pointerId);
+  svg.setPointerCapture(e.pointerId);
 
   const p = pos(e);
-  start = p;
-  last = p;
 
-  if (tool === "box"){
-    takeSnapshot(); // so we can preview while dragging
-  } else if (tool === "pen"){
-    // start a dot
-    drawLine(p, {x:p.x+0.01, y:p.y+0.01}, strokeColor, strokeSize);
-  } else if (tool === "erase"){
-    eraseAt(p, strokeSize);
+  // ERASER: delete whatever you click
+  if (tool === "erase") {
+    const target = e.target.closest(".svg-box, .svg-ink");
+    if (target) target.remove();
+    drawing = false;
+    return;
+  }
+
+  // BOX: create a group with rect + text
+  if (tool === "box") {
+    start = p;
+
+    const g = svgEl("g", { class: "svg-box" });
+    const rect = svgEl("rect", {
+      x: p.x, y: p.y, width: 1, height: 1,
+      fill: strokeColor   // color picker fills box
+    });
+
+    const text = svgEl("text", {
+      x: p.x + 6,
+      y: p.y + 18
+    });
+    text.textContent = "";
+
+    g.append(rect, text);
+    svg.appendChild(g);
+
+    current = g;
+    return;
+  }
+
+  // PEN: create a path
+  if (tool === "pen") {
+    const path = svgEl("path", {
+      class: "svg-ink",
+      d: `M ${p.x} ${p.y}`,
+      stroke: strokeColor,
+      "stroke-width": strokeSize
+    });
+
+    svg.appendChild(path);
+    current = { path, d: [`M ${p.x} ${p.y}`] };
+    return;
   }
 });
 
-canvas.addEventListener("pointermove", (e) => {
+svg.addEventListener("pointermove", (e) => {
   if (!drawing) return;
+
   const p = pos(e);
 
-  if (tool === "pen"){
-    drawLine(last, p, strokeColor, strokeSize);
-  }
+  // BOX resize
+  if (tool === "box" && current && start) {
+    const rect = current.querySelector("rect");
+    const text = current.querySelector("text");
 
-  if (tool === "erase"){
-    eraseAt(p, strokeSize);
-  }
-
-  if (tool === "box"){
-    restoreSnapshot();
     const r = normRect(start, p);
-    // preview: fill at current color
-    fillRect(r, strokeColor);
+
+    rect.setAttribute("x", r.x);
+    rect.setAttribute("y", r.y);
+    rect.setAttribute("width", r.w);
+    rect.setAttribute("height", r.h);
+
+    // keep text near top-left inside box
+    text.setAttribute("x", r.x + 6);
+    text.setAttribute("y", r.y + 18);
   }
 
-  last = p;
+  // PEN draw
+  if (tool === "pen" && current && current.path) {
+    current.d.push(`L ${p.x} ${p.y}`);
+    current.path.setAttribute("d", current.d.join(" "));
+  }
+
+  // ERASER drag (optional: erases as you drag)
+  if (tool === "erase") {
+    const target = e.target.closest(".svg-box, .svg-ink");
+    if (target) target.remove();
+  }
 });
 
-canvas.addEventListener("pointerup", (e) => {
+svg.addEventListener("pointerup", () => {
   drawing = false;
+
+  // if you made a tiny box, remove it
+  if (tool === "box" && current) {
+    const rect = current.querySelector("rect");
+    const w = parseFloat(rect.getAttribute("width"));
+    const h = parseFloat(rect.getAttribute("height"));
+    if (w < 10 || h < 10) current.remove();
+  }
+
   start = null;
-  last = null;
-  snapshot = null;
+  current = null;
+});
+
+// ---- Text editing ----
+// Click a box to set text (works no matter what tool you’re on, except erase)
+svg.addEventListener("click", (e) => {
+  if (tool === "erase") return;
+
+  const box = e.target.closest(".svg-box");
+  if (!box) return;
+
+  const textEl = box.querySelector("text");
+  const currentText = textEl.textContent || "";
+
+  const next = prompt("text inside box:", currentText);
+  if (next !== null) textEl.textContent = next;
 });
