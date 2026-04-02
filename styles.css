@@ -129,10 +129,19 @@ footer{ display: none; } /* if any platform injects one */
   stroke-linejoin: round;
 }
 
-html,
-body,
-#svg,
-.tools,
-.tools * {
-  cursor: url("./32.png") 0 0, auto !important;
+/* hide system cursor */
+html, body, #svg, .tools, .tools * {
+  cursor: none !important;
+}
+
+/* fake cursor */
+#catCursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  z-index: 999999;
+  transform: translate(0, 0); /* hotspot tweak later */
 }
