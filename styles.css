@@ -68,7 +68,6 @@ footer{ display: none; } /* if any platform injects one */
   line-height: 1;
   background: #f2f2f2;
   border: 1px solid #aaa;
-  cursor: pointer;
 }
 
 .tools .tool.active{ background: #d0d0d0; }
@@ -86,7 +85,6 @@ footer{ display: none; } /* if any platform injects one */
   padding: 0;
   border: none;
   background: transparent;
-  cursor: pointer;
 }
 
 .tools input[type="range"]{
@@ -103,7 +101,6 @@ footer{ display: none; } /* if any platform injects one */
 }
 
 /* Box objects */
-.svg-box{ cursor: pointer; }
 
 .svg-box rect{
   stroke: rgba(0,0,0,0.20);
