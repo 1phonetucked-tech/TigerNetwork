@@ -1,4 +1,26 @@
 // ---- DOM ----
+const catCursor = document.getElementById("catCursor");
+
+// Only enable fake-cursor mode if the element exists
+if (catCursor) {
+  document.documentElement.classList.add("has-fake-cursor");
+
+  // smooth + low-jank cursor follow
+  let mx = 0, my = 0, raf = 0;
+
+  window.addEventListener("pointermove", (e) => {
+    mx = e.clientX;
+    my = e.clientY;
+
+    if (!raf) {
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        catCursor.style.left = mx + "px";
+        catCursor.style.top  = my + "px";
+      });
+    }
+  });
+}
 const svg = document.getElementById("svg");
 const toolButtons = document.querySelectorAll(".tool[data-tool]");
 const colorInput = document.getElementById("color");
