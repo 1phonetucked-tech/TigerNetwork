@@ -47,9 +47,7 @@ toolButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     tool = btn.dataset.tool;
     setActive(btn);
-
-    svg.style.cursor =
-      tool === "erase" ? "cell" : "crosshair";
+    
   });
 });
 
@@ -183,5 +181,3 @@ svg.addEventListener("click", (e) => {
   const next = prompt("text inside box:", currentText);
   if (next !== null) textEl.textContent = next;
 });
-svg.style.cursor =
-  tool === "erase" ? "cell" : "crosshair";
