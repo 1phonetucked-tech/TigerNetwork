@@ -34,6 +34,10 @@ footer{ display: none; } /* if any platform injects one */
   text-decoration: none !important;
 }
 
+#svg {
+  cursor: url("./Picture1.png") 16 16, auto !important;
+}
+
 .tn-logo img{
   width: auto;
   max-width: 200px;   /* change this safely */
