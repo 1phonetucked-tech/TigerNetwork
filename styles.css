@@ -3,30 +3,23 @@
 ------------------------------ */
 * { box-sizing: border-box; }
 
-html, body {
-  height: 100%;
-}
+html, body { height: 100%; }
 
-body {
+body{
   margin: 0;
   background: #fff;
   font-family: system-ui, -apple-system, Segoe UI, sans-serif;
 
-  /* content width (Bear-era, still fine) */
+  /* optional old layout constraint (doesn't affect fixed elements) */
   max-width: 720px;
   padding: 0 20px;
   margin-left: auto;
   margin-right: auto;
 
-  /* needed for canvas app */
   overflow: hidden;
 }
 
-nav a { margin-right: 5px; }
-
-/* Hide Bear footer / powered by */
-footer { display: none; }
-
+footer{ display: none; } /* if any platform injects one */
 
 /* ------------------------------
    TigerNet header (TOP RIGHT)
@@ -43,24 +36,13 @@ footer { display: none; }
   text-decoration: none !important;
 }
 
-/* ✅ LOGO SIZE — adjust ONE number only */
 .tn-logo img{
   width: auto;
-  max-width: 160px;   /* ← safe to change */
+  max-width: 160px;   /* change this safely */
   height: auto;
   display: block;
   opacity: 0.9;
 }
-
-
-/* Hide ONLY Bear site title header */
-header .site-title,
-header #title,
-header h1,
-header h1 a {
-  display: none !important;
-}
-
 
 /* ------------------------------
    MS Paint–style TOOLBAR
@@ -91,13 +73,8 @@ header h1 a {
   cursor: pointer;
 }
 
-.tools .tool.active{
-  background: #d0d0d0;
-}
-
-.tools .tool.danger{
-  color: #7a1b1b;
-}
+.tools .tool.active{ background: #d0d0d0; }
+.tools .tool.danger{ color: #7a1b1b; }
 
 .tools .divider{
   height: 1px;
@@ -119,20 +96,8 @@ header h1 a {
   accent-color: #444;
 }
 
-
 /* ------------------------------
-   Full-screen drawing canvas
------------------------------- */
-#canvas{
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1;
-  cursor: crosshair;
-}
-/* ------------------------------
-   SVG drawing surface
+   SVG drawing surface (FULL PAGE)
 ------------------------------ */
 #svg{
   position: fixed;
@@ -143,27 +108,32 @@ header h1 a {
   cursor: crosshair;
 }
 
-/* SVG box group */
-.svg-box{
-  cursor: pointer;
-}
+/* Box objects */
+.svg-box{ cursor: pointer; }
 
-/* sharp box */
 .svg-box rect{
-  fill: var(--fill, #ddd);
-  stroke: rgba(0,0,0,0.2);
+  stroke: rgba(0,0,0,0.20);
   stroke-width: 1;
 }
 
-/* text inside */
+/* Text inside (hidden until hover) */
 .svg-box text{
   font-size: 14px;
   fill: #111;
   pointer-events: none;
   user-select: none;
+
+  opacity: 0;
+  transition: opacity 120ms linear;
 }
 
-/* future hook: hover reveal */
-.svg-box .content{
+.svg-box:hover text{
   opacity: 1;
+}
+
+/* Pen strokes */
+.svg-ink{
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
