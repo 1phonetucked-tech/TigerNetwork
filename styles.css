@@ -131,3 +131,39 @@ header h1 a {
   z-index: 1;
   cursor: crosshair;
 }
+/* ------------------------------
+   SVG drawing surface
+------------------------------ */
+#svg{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  cursor: crosshair;
+}
+
+/* SVG box group */
+.svg-box{
+  cursor: pointer;
+}
+
+/* sharp box */
+.svg-box rect{
+  fill: var(--fill, #ddd);
+  stroke: rgba(0,0,0,0.2);
+  stroke-width: 1;
+}
+
+/* text inside */
+.svg-box text{
+  font-size: 14px;
+  fill: #111;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* future hook: hover reveal */
+.svg-box .content{
+  opacity: 1;
+}
