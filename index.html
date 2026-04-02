@@ -1,53 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TigerNet</title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-<!-- TigerNet header -->
-<div class="tn-header">
-  <a href="/" class="tn-logo">
-    <img src="tigernet.png" alt="TigerNet">
-  </a>
-</div
-
-  <!-- ✅ YOUR HEADER GOES HERE -->
-  <!-- paste your header markup inside this -->
-  <div class="tn-header">
-    <!-- your existing header HTML -->
-  </div>
-
-  <!-- page content -->
-  <main>
-    <!-- canvas / boxes / content -->
-  </main>
-
-</body>
-</html>
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>TigerNet</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <!-- optional: your top-right TigerNet logo -->
+
+  <!-- Top-right logo -->
   <div class="tn-header">
-    <a class="tn-logo" href="./">
-      <img src="./tigernet.png" alt="TigerNet" />
+    <a class="tn-logo" href="/">
+      <img src="tigernet.png" alt="TigerNet" />
     </a>
   </div>
 
-  <!-- MS-paint-ish tool rail -->
+  <!-- Tools -->
   <div class="tools" aria-label="tools">
     <button class="tool active" data-tool="box" title="Box">□</button>
     <button class="tool" data-tool="pen" title="Pen">✎</button>
@@ -63,9 +32,9 @@
     <button id="clear" class="tool danger" title="Clear">×</button>
   </div>
 
-  <!-- drawing surface -->
+  <!-- SVG drawing surface -->
   <svg id="svg" aria-label="drawing surface"></svg>
 
-  <script src="./app.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
