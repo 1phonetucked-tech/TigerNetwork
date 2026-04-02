@@ -145,3 +145,11 @@ html, body, #svg, .tools, .tools * {
   z-index: 999999;
   transform: translate(0, 0); /* hotspot tweak later */
 }
+/* Only hide cursor when JS confirms the fake cursor exists */
+.has-fake-cursor,
+.has-fake-cursor body,
+.has-fake-cursor #svg,
+.has-fake-cursor .tools,
+.has-fake-cursor .tools * {
+  cursor: none !important;
+}
