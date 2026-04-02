@@ -131,3 +131,7 @@ footer{ display: none; } /* if any platform injects one */
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+#svg {
+  cursor: url("./Picture1.png") 16 16, auto;
+}
