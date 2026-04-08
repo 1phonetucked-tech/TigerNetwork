@@ -100,7 +100,8 @@ footer{ display: none; }
 .svg-box text{
   font-size: 14px;
   fill: #111;
-  pointer-events: none;
+  pointer-events: auto;   /* ✅ allow clicking */
+  cursor: text;
   opacity: 1;
   transition: opacity 120ms linear;
 }
