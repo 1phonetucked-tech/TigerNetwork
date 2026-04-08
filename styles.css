@@ -136,7 +136,12 @@ footer{ display: none; }
 /* ------------------------------
    FAKE CURSOR
 ------------------------------ */
-html, body, #svg, .tools, .tools *{
+
+.has-fake-cursor,
+.has-fake-cursor body,
+.has-fake-cursor #svg,
+.has-fake-cursor .tools,
+.has-fake-cursor .tools *{
   cursor: none !important;
 }
 
