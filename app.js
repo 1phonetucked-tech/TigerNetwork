@@ -166,4 +166,17 @@ svg.addEventListener("dblclick", e => {
   const box = e.target.closest(".svg-box");
   if (box) box.classList.toggle("locked");
 });
-``
+svg.addEventListener("pointerdown", (e) => {
+  if (tool !== "text") return;
+
+  const box = e.target.closest(".svg-box");
+  if (!box || box.classList.contains("locked")) return;
+
+  e.stopPropagation(); // ✅ prevent drawing logic
+
+  const textEl = box.querySelector("text");
+  const current = textEl.textContent || "";
+  const next = prompt("Text:", current);
+
+  if (next !== null) textEl.textContent = next;
+});
