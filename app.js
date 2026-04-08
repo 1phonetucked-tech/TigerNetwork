@@ -125,7 +125,7 @@ svg.addEventListener("pointerup", () => {
   const w = +rect.getAttribute("width");
   const h = +rect.getAttribute("height");
 
-  //  remove tiny accidental boxes
+  // remove tiny accidental boxes
   if (w < 12 || h < 12) {
     currentBox.remove();
     currentBox = null;
@@ -133,23 +133,21 @@ svg.addEventListener("pointerup", () => {
     return;
   }
 
-  //  prompt for text
+  // prompt for text
   const userText = prompt("Add text to this box:");
   if (userText) {
-    const now = new Date();
-    const timestamp = now.toLocaleString();
+    const timestamp = new Date().toLocaleString();
 
-textEl.textContent = "";
-const lines = [userText, timestamp];
+    textEl.textContent = "";
 
-lines.forEach((line, i) => {
-  const tspan = document.createElementNS(NS, "tspan");
-  tspan.setAttribute("x", textEl.getAttribute("x"));
-  tspan.setAttribute("dy", i === 0 ? "0em" : "1.2em");
-  tspan.textContent = line;
-  textEl.appendChild(tspan);
-});
-
+    [userText, timestamp].forEach((line, i) => {
+      const tspan = document.createElementNS(NS, "tspan");
+      tspan.setAttribute("x", textEl.getAttribute("x"));
+      tspan.setAttribute("dy", i === 0 ? "0em" : "1.2em");
+      tspan.textContent = line;
+      textEl.appendChild(tspan);
+    });
+  }
 
   currentBox = null;
   start = null;
