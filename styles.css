@@ -3,21 +3,18 @@
 ------------------------------ */
 * { box-sizing: border-box; }
 
-html, body { height: 100%; }
-
-
 html, body {
   height: 100%;
   margin: 0;
 }
 
-body {
-  overflow-x: auto;   /* ✅ allow sideways scroll */
-  overflow-y: hidden; /* ❌ disable vertical scroll */
+body{
+  overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
 }
 
-footer{ display: none; } /* if any platform injects one */
+footer{ display: none; }
 
 /* ------------------------------
    TigerNet header (TOP RIGHT)
@@ -29,21 +26,15 @@ footer{ display: none; } /* if any platform injects one */
   z-index: 3000;
 }
 
-.tn-logo{
-  display: inline-block;
-  text-decoration: none !important;
-}
-
 .tn-logo img{
-  width: auto;
-  max-width: 200px;   /* change this safely */
+  max-width: 200px;
   height: auto;
   display: block;
-  opacity: 0.9;
+  opacity: .9;
 }
 
 /* ------------------------------
-   MS Paint–style TOOLBAR
+   TOOLBAR
 ------------------------------ */
 .tools{
   position: fixed;
@@ -58,14 +49,12 @@ footer{ display: none; } /* if any platform injects one */
   padding: 6px;
   background: #e6e6e6;
   border: 1px solid #bcbcbc;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
 }
 
 .tools .tool{
   width: 28px;
   height: 28px;
-  font-size: 16px;
-  line-height: 1;
   background: #f2f2f2;
   border: 1px solid #aaa;
 }
@@ -79,77 +68,85 @@ footer{ display: none; } /* if any platform injects one */
   margin: 6px 0;
 }
 
-.tools input[type="color"]{
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: none;
-  background: transparent;
-}
-
+.tools input[type="color"],
 .tools input[type="range"]{
   width: 28px;
-  accent-color: #444;
 }
 
 /* ------------------------------
-   SVG drawing surface (FULL PAGE)
+   SVG SURFACE
 ------------------------------ */
-#svg {
-  width: 300vw;   /* 👈 3 screens wide, adjust as you like */
+#svg{
+  width: 300vw;
   height: 100vh;
 }
 
-/* Box objects */
-
+/* ------------------------------
+   BOXES
+------------------------------ */
 .svg-box rect{
-  stroke: rgba(0,0,0,0.20);
+  stroke: rgba(0,0,0,.25);
   stroke-width: 1;
 }
 
-/* Text inside (hidden until hover) */
+/* box fill overlay */
+.box-cover{
+  opacity: 0;
+  transition: opacity 150ms linear;
+  pointer-events: none;
+}
+
+/* text inside boxes */
 .svg-box text{
   font-size: 14px;
   fill: #111;
   pointer-events: none;
-  user-select: none;
-
-  opacity: 0;
+  opacity: 1;
   transition: opacity 120ms linear;
 }
 
-.svg-box:hover text{
+/* LOCKED STATE */
+.svg-box.locked .box-cover{
   opacity: 1;
 }
 
-/* Pen strokes */
+.svg-box.locked text{
+  opacity: 0;
+}
+
+.svg-box.locked:hover .box-cover{
+  opacity: 0;
+}
+
+.svg-box.locked:hover text{
+  opacity: 1;
+}
+
+/* ------------------------------
+   PEN STROKES
+------------------------------ */
 .svg-ink{
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-/* hide system cursor */
-html, body, #svg, .tools, .tools * {
+/* ------------------------------
+   FAKE CURSOR
+------------------------------ */
+html, body, #svg, .tools, .tools *{
   cursor: none !important;
 }
 
-/* fake cursor */
-#catCursor {
+#catCursor{
   position: fixed;
-  top: 0;
-  left: 0;
   width: 32px;
   height: 32px;
   pointer-events: none;
   z-index: 999999;
-  transform: translate(0, 0); /* hotspot tweak later */
 }
-/* Only hide cursor when JS confirms the fake cursor exists */
+
 .has-fake-cursor,
-.has-fake-cursor body,
-.has-fake-cursor #svg,
-.has-fake-cursor .tools,
-.has-fake-cursor .tools * {
+.has-fake-cursor *{
   cursor: none !important;
 }
