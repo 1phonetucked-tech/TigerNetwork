@@ -115,6 +115,8 @@ svg.addEventListener("pointerdown", e => {
       window.removeEventListener("pointermove",move);
     },{once:true});
   }
+  
+  });
 
 // --------------------------------
 // POINTER MOVE (box resize)
