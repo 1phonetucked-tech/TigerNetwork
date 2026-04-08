@@ -167,3 +167,16 @@ svg.addEventListener("pointerup", () => {
   currentBox = null;
   start = null;
 });
+svg.addEventListener("dblclick", (e) => {
+  const box = e.target.closest(".svg-box");
+  if (!box) return;
+
+  const cover = box.querySelector(".box-cover");
+  if (!cover) return;
+
+  // set fill color from picker
+  cover.setAttribute("fill", colorPicker.value);
+
+  // toggle filled state
+  box.classList.toggle("locked");
+});
