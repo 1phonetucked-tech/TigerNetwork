@@ -97,13 +97,14 @@ footer{ display: none; }
 }
 
 /* text inside boxes */
-.svg-box text{
-  font-size: 14px;
-  fill: #111;
-  pointer-events: auto;   /* ✅ allow clicking */
+
+.svg-box:not(.locked) text{
+  pointer-events: auto;
   cursor: text;
-  opacity: 1;
-  transition: opacity 120ms linear;
+}
+
+.svg-box.locked text{
+  pointer-events: none;
 }
 
 /* LOCKED STATE */
