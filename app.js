@@ -116,23 +116,13 @@ svg.addEventListener("pointerdown", e => {
     },{once:true});
   }
 
-  // TEXT
-  if (tool === "text") {
-    const box = e.target.closest(".svg-box");
-    if (!box || box.classList.contains("locked")) return;
-
-    const t = box.querySelector("text");
-    const current = t.textContent || "";
-    const next = prompt("Text:",current);
-    if (next !== null) t.textContent = next;
-  }
-});
-
 // --------------------------------
 // POINTER MOVE (box resize)
 // --------------------------------
+
 svg.addEventListener("pointermove", e => {
-  if (!drawing || !currentBox) return;
+  if (tool === "text") return;
+  
 
   const r = norm(start,pos(e));
   const outline = currentBox.querySelector("rect:not(.box-cover)");
