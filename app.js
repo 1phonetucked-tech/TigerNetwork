@@ -1,205 +1,181 @@
-// ---- DOM ----
+// --------------------------------
+// Fake cursor
+// --------------------------------
 const catCursor = document.getElementById("catCursor");
 
-// Only enable fake-cursor mode if the element exists
 if (catCursor) {
   document.documentElement.classList.add("has-fake-cursor");
 
-  // smooth + low-jank cursor follow
-  let mx = 0, my = 0, raf = 0;
+  let x = 0, y = 0, raf = 0;
 
-  window.addEventListener("pointermove", (e) => {
-    mx = e.clientX;
-    my = e.clientY;
-
+  window.addEventListener("pointermove", e => {
+    x = e.clientX;
+    y = e.clientY;
     if (!raf) {
       raf = requestAnimationFrame(() => {
         raf = 0;
-        catCursor.style.left = mx + "px";
-        catCursor.style.top  = my + "px";
+        catCursor.style.left = x + "px";
+        catCursor.style.top  = y + "px";
       });
     }
   });
 }
+
+// --------------------------------
+// SVG setup
+// --------------------------------
 const svg = document.getElementById("svg");
-const toolButtons = document.querySelectorAll(".tool[data-tool]");
+const NS  = "http://www.w3.org/2000/svg";
+
+const tools = document.querySelectorAll(".tool[data-tool]");
 const colorInput = document.getElementById("color");
 const sizeInput  = document.getElementById("size");
 const clearBtn   = document.getElementById("clear");
 
-const NS = "http://www.w3.org/2000/svg";
-
-// ---- State ----
+// --------------------------------
+// State
+// --------------------------------
 let tool = "box";
 let drawing = false;
+let start = null;
+let current = null;
 
 let strokeColor = colorInput.value;
-let strokeSize  = parseInt(sizeInput.value, 10);
+let strokeSize  = +sizeInput.value;
 
-let start = null;        // for box drag
-let current = null;      // current element (g for box, path for pen)
-
-// ---- helpers ----
-function svgEl(tag, attrs = {}) {
+// --------------------------------
+// Helpers
+// --------------------------------
+const svgEl = (tag, attrs={}) => {
   const el = document.createElementNS(NS, tag);
   for (const k in attrs) el.setAttribute(k, attrs[k]);
   return el;
-}
+};
 
-function pos(e){
+const pos = e => {
   const r = svg.getBoundingClientRect();
   return { x: e.clientX - r.left, y: e.clientY - r.top };
-}
+};
 
-function normRect(a, b){
-  const x = Math.min(a.x, b.x);
-  const y = Math.min(a.y, b.y);
-  const w = Math.abs(a.x - b.x);
-  const h = Math.abs(a.y - b.y);
-  return { x, y, w, h };
-}
+const norm = (a,b) => ({
+  x: Math.min(a.x,b.x),
+  y: Math.min(a.y,b.y),
+  w: Math.abs(a.x-b.x),
+  h: Math.abs(a.y-b.y)
+});
 
-function setActive(btn){
-  toolButtons.forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-}
-
-// ---- Tool UI (kept!) ----
-toolButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
+// --------------------------------
+// Tool UI
+// --------------------------------
+tools.forEach(btn => {
+  btn.onclick = () => {
     tool = btn.dataset.tool;
-    setActive(btn);
-    
-  });
+    tools.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  };
 });
 
-colorInput.addEventListener("input", () => {
-  strokeColor = colorInput.value;
-});
+colorInput.oninput = () => strokeColor = colorInput.value;
+sizeInput.oninput  = () => strokeSize  = +sizeInput.value;
+clearBtn.onclick   = () => svg.innerHTML = "";
 
-sizeInput.addEventListener("input", () => {
-  strokeSize = parseInt(sizeInput.value, 10);
-});
-
-clearBtn.addEventListener("click", () => {
-  svg.innerHTML = "";
-});
-
-// ---- Drawing logic ----
-svg.addEventListener("pointerdown", (e) => {
-  // Only interact when clicking on the SVG surface
+// --------------------------------
+// Draw logic
+// --------------------------------
+svg.addEventListener("pointerdown", e => {
   drawing = true;
   svg.setPointerCapture(e.pointerId);
 
   const p = pos(e);
 
-  // ERASER: delete whatever you click
   if (tool === "erase") {
-    const target = e.target.closest(".svg-box, .svg-ink");
-    if (target) target.remove();
+    e.target.closest(".svg-box, .svg-ink")?.remove();
     drawing = false;
     return;
   }
 
-  // BOX: create a group with rect + text
   if (tool === "box") {
     start = p;
 
     const g = svgEl("g", { class: "svg-box" });
-    const rect = svgEl("rect", {
-      x: p.x, y: p.y, width: 1, height: 1,
-      fill: strokeColor   // color picker fills box
+
+    const rect = svgEl("rect", { fill: "none" });
+    const text = svgEl("text");
+    const cover = svgEl("rect", {
+      fill: strokeColor,
+      class: "box-cover"
     });
 
-    const text = svgEl("text", {
-      x: p.x + 6,
-      y: p.y + 18
-    });
-    text.textContent = "";
-
-    g.append(rect, text);
+    g.append(rect, text, cover);
     svg.appendChild(g);
 
     current = g;
     return;
   }
 
-  // PEN: create a path
   if (tool === "pen") {
     const path = svgEl("path", {
       class: "svg-ink",
-      d: `M ${p.x} ${p.y}`,
       stroke: strokeColor,
-      "stroke-width": strokeSize
+      "stroke-width": strokeSize,
+      d: `M ${p.x} ${p.y}`
     });
-
     svg.appendChild(path);
-    current = { path, d: [`M ${p.x} ${p.y}`] };
-    return;
+    current = { path, d:[`M ${p.x} ${p.y}`] };
   }
 });
 
-svg.addEventListener("pointermove", (e) => {
+svg.addEventListener("pointermove", e => {
   if (!drawing) return;
-
   const p = pos(e);
 
-  // BOX resize
   if (tool === "box" && current && start) {
-    const rect = current.querySelector("rect");
-    const text = current.querySelector("text");
+    const r = norm(start,p);
+    const rect  = current.querySelector("rect");
+    const cover = current.querySelector(".box-cover");
+    const text  = current.querySelector("text");
 
-    const r = normRect(start, p);
+    [rect, cover].forEach(el => {
+      el.setAttribute("x", r.x);
+      el.setAttribute("y", r.y);
+      el.setAttribute("width", r.w);
+      el.setAttribute("height", r.h);
+    });
 
-    rect.setAttribute("x", r.x);
-    rect.setAttribute("y", r.y);
-    rect.setAttribute("width", r.w);
-    rect.setAttribute("height", r.h);
-
-    // keep text near top-left inside box
     text.setAttribute("x", r.x + 6);
     text.setAttribute("y", r.y + 18);
   }
 
-  // PEN draw
-  if (tool === "pen" && current && current.path) {
+  if (tool === "pen" && current?.path) {
     current.d.push(`L ${p.x} ${p.y}`);
     current.path.setAttribute("d", current.d.join(" "));
-  }
-
-  // ERASER drag (optional: erases as you drag)
-  if (tool === "erase") {
-    const target = e.target.closest(".svg-box, .svg-ink");
-    if (target) target.remove();
   }
 });
 
 svg.addEventListener("pointerup", () => {
   drawing = false;
-
-  // if you made a tiny box, remove it
-  if (tool === "box" && current) {
-    const rect = current.querySelector("rect");
-    const w = parseFloat(rect.getAttribute("width"));
-    const h = parseFloat(rect.getAttribute("height"));
-    if (w < 10 || h < 10) current.remove();
-  }
-
   start = null;
   current = null;
 });
 
-// ---- Text editing ----
-// Click a box to set text (works no matter what tool you’re on, except erase)
-svg.addEventListener("click", (e) => {
+// --------------------------------
+// TEXT EDIT
+// --------------------------------
+svg.addEventListener("click", e => {
   if (tool === "erase") return;
 
   const box = e.target.closest(".svg-box");
-  if (!box) return;
+  if (!box || box.classList.contains("locked")) return;
 
-  const textEl = box.querySelector("text");
-  const currentText = textEl.textContent || "";
+  const t = box.querySelector("text");
+  const txt = prompt("text inside box:", t.textContent);
+  if (txt !== null) t.textContent = txt;
+});
 
-  const next = prompt("text inside box:", currentText);
-  if (next !== null) textEl.textContent = next;
+// --------------------------------
+// DOUBLE‑CLICK = LOCK / UNLOCK
+// --------------------------------
+svg.addEventListener("dblclick", e => {
+  const box = e.target.closest(".svg-box");
+  if (box) box.classList.toggle("locked");
 });
