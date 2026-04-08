@@ -123,23 +123,22 @@ svg.addEventListener("pointerdown", e => {
 // --------------------------------
 
 svg.addEventListener("pointermove", e => {
-  if (tool === "text") return;
-  
+  if (!drawing || !currentBox) return;
 
-  const r = norm(start,pos(e));
+  const r = norm(start, pos(e));
   const outline = currentBox.querySelector("rect:not(.box-cover)");
   const cover   = currentBox.querySelector(".box-cover");
   const text    = currentBox.querySelector("text");
 
-  [outline,cover].forEach(el=>{
-    el.setAttribute("x",r.x);
-    el.setAttribute("y",r.y);
-    el.setAttribute("width",r.w);
-    el.setAttribute("height",r.h);
+  [outline, cover].forEach(el => {
+    el.setAttribute("x", r.x);
+    el.setAttribute("y", r.y);
+    el.setAttribute("width", r.w);
+    el.setAttribute("height", r.h);
   });
 
-  text.setAttribute("x",r.x+6);
-  text.setAttribute("y",r.y+18);
+  text.setAttribute("x", r.x + 6);
+  text.setAttribute("y", r.y + 18);
 });
 
 // --------------------------------
