@@ -1,10 +1,21 @@
+
 // --------------------------------
-// Fake cursor
+// cat cursor (FINAL)
 // --------------------------------
 const catCursor = document.getElementById("catCursor");
+
 if (catCursor) {
   document.documentElement.classList.add("has-fake-cursor");
-  window.addEventListener("pointermove", e => {
+
+  // ✅ ensure it is visible immediately
+  catCursor.style.display = "block";
+  catCursor.style.opacity = "1";
+
+  // ✅ give it a starting position (center of screen)
+  catCursor.style.left = "50vw";
+  catCursor.style.top  = "50vh";
+
+  window.addEventListener("pointermove", (e) => {
     catCursor.style.left = e.clientX + "px";
     catCursor.style.top  = e.clientY + "px";
   });
