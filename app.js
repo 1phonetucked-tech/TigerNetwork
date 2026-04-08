@@ -179,28 +179,35 @@ svg.addEventListener("pointerup", () => {
 });
 
 // --------------------------------
-// Click interactions
+// HIT‑TESTED CLICK INTERACTIONS
 // --------------------------------
-svg.addEventListener("click", (e) => {
+svg.addEventListener("pointerup", (e) => {
   if (tool === "erase") return;
 
-  const box = e.target.closest(".svg-box");
+  // screen coords
+  const clientX = e.clientX;
+  const clientY = e.clientY;
+
+  // actual element under cursor
+  const hit = document.elementFromPoint(clientX, clientY);
+  if (!hit) return;
+
+  const box = hit.closest(".svg-box");
   if (!box) return;
 
-  // ✅ SHIFT + CLICK = FILL / LOCK
+  // ✅ SHIFT + RELEASE = LOCK / UNLOCK (FILL)
   if (e.shiftKey) {
     box.classList.toggle("locked");
     return;
   }
 
-  // Do not edit locked boxes
+  // ❌ do nothing if locked
   if (box.classList.contains("locked")) return;
 
-  // Edit text
+  // ✅ normal click = edit text
   const textEl = box.querySelector("text");
   const currentText = textEl.textContent || "";
 
   const next = prompt("text inside box:", currentText);
   if (next !== null) textEl.textContent = next;
 });
-``
