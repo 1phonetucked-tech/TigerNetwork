@@ -176,6 +176,7 @@ svg.addEventListener("click", e => {
 // DOUBLE‑CLICK = LOCK / UNLOCK
 // --------------------------------
 svg.addEventListener("dblclick", e => {
+}, true);
   const box = e.target.closest(".svg-box");
   if (box) box.classList.toggle("locked");
 });
