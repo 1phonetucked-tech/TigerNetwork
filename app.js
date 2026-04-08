@@ -1,6 +1,21 @@
 // --------------------------------
 // Fake cursor (stable)
 // --------------------------------
+const colorPicker = document.getElementById("colorPicker");
+const rgbValue = document.getElementById("rgbValue");
+
+function hexToRgb(hex) {
+  const v = hex.replace("#", "");
+  const r = parseInt(v.substring(0,2), 16);
+  const g = parseInt(v.substring(2,4), 16);
+  const b = parseInt(v.substring(4,6), 16);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+colorPicker.addEventListener("input", () => {
+  rgbValue.textContent = hexToRgb(colorPicker.value);
+});
+
 const cat = document.getElementById("catCursor");
 if (cat) {
   document.documentElement.classList.add("has-fake-cursor");
