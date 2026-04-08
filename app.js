@@ -70,6 +70,22 @@ clearBtn.onclick   = () => svg.innerHTML = "";
 // --------------------------------
 // POINTER DOWN
 // --------------------------------
+
+
+  // TEXT TOOL — EXIT EARLY
+  if (tool === "text") {
+    const hit = document.elementFromPoint(e.clientX, e.clientY);
+    const box = hit?.closest(".svg-box");
+    if (!box || box.classList.contains("locked")) return;
+
+    const textEl = box.querySelector("text");
+    const current = textEl.textContent || "";
+    const next = prompt("Text:", current);
+    if (next !== null) textEl.textContent = next;
+
+    return; // ⛔ stop ALL drawing logic
+  }
+
 svg.addEventListener("pointerdown", e => {
   const p = pos(e);
 
@@ -157,8 +173,6 @@ svg.addEventListener("dblclick", e => {
   const box = e.target.closest(".svg-box");
   if (box) box.classList.toggle("locked");
 });
-svg.addEventListener("pointerdown", (e) => {
-  if (tool !== "text") return;
 
   const box = e.target.closest(".svg-box");
   if (!box || box.classList.contains("locked")) return;
