@@ -6,39 +6,18 @@
   <title>TIGERNETWORK</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
 
-  <!-- Top-right logo -->
-  <div class="tn-header">
-    <a class="tn-logo" href="/">
-      <img src="./tigernet.png" alt="TigerNet" />
-    </a>
+  <div class="tools">
+    <button class="tool active" data-tool="box">□</button>
+    <button class="tool" data-tool="text">T</button>
+    <button class="tool" data-tool="fill">⬛</button>
   </div>
 
-  <!-- Tools -->
-  <div class="tools" aria-label="tools">
-    <button class="tool active" data-tool="box" title="Box">□</button>
-    <button class="tool" data-tool="pen" title="Pen">✎</button>
-    <button class="tool" data-tool="erase" title="Eraser">⌫</button>
-    <button class="tool" data-tool="text" title="Text">T</button>
+  <svg id="svg"></svg>
 
-    <div class="divider"></div>
-
-    <input id="color" type="color" value="#111111" title="Color" />
-    <input id="size" type="range" min="1" max="22" value="3" title="Size" />
-
-    <div class="divider"></div>
-
-    <button id="clear" class="tool danger" title="Clear">×</button>
-  </div>
-
-  <!-- SVG drawing surface -->
-  <svg id="svg" aria-label="drawing surface"></svg>
-
-  <!-- Fake cursor -->
   <img id="catCursor" src="./32.png" alt="" />
 
-  <script src="app.js" defer></script>
+  <script src="app.js"></script>
 </body>
 </html>
