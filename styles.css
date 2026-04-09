@@ -10,51 +10,59 @@ html, body {
   height:100vh;
 }
 
+
 /* toolbar */
 .tools{
-  position:fixed;
-  top:10px;
-  left:10px;
-  display:flex;
-  flex-direction: column;
-  gap:6px;
-  z-index:10;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;   /* stack downward */
+  gap: 8px;
+  z-index: 10;
 }
 
+/* generic tool button */
 .tool{
-  width:32px;
-  height:32px;
-  /* color picker styled like tool button */
-.color-tool{
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: 1px solid #aaa;
   background: #f2f2f2;
-}
-/* big eraser button */
-.eraser-tool{
-  width: 40px;
-  height: 40px;
-  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* eraser button: slightly bigger, nudged right */
+.eraser-tool{
+  width: 44px;   /* bigger but not insane */
+  height: 44px;
+  margin-left: 6px; /* subtle right offset */
+}
+
+/* eraser image scaling */
 .eraser-tool img{
   width: 100%;
   height: 100%;
   object-fit: contain;
   pointer-events: none; /* click goes to button */
 }
-/* remove native color input chrome */
-.color-tool::-webkit-color-swatch-wrapper{
+
+/* color picker styled like tool */
+.color-tool{
+  width: 32px;
+  height: 32px;
   padding: 0;
-}
-.color-tool::-webkit-color-swatch{
-  border: none;
+  border: 1px solid #aaa;
+  background: #f2f2f2;
 }
 
-/* Firefox */
-.color-tool::-moz-color-swatch{
-  border: none;
-}
+/* strip native color chrome */
+.color-tool::-webkit-color-swatch-wrapper{ padding: 0; }
+.color-tool::-webkit-color-swatch{ border: none; }
+.color-tool::-moz-color-swatch{ border: none; }
+
 }
 
 /* boxes */
