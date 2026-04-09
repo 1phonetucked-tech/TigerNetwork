@@ -16,6 +16,7 @@ html, body {
   top:10px;
   left:10px;
   display:flex;
+  flex-direction: column;
   gap:6px;
   z-index:10;
 }
