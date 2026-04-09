@@ -1,123 +1,55 @@
-*{ box-sizing:border-box; }
+/* ------------------------------
+   Base reset
+------------------------------ */
+* {
+  box-sizing: border-box;
+}
 
 html, body {
-  margin:0;
-  height:100%;
+  margin: 0;
+  height: 100%;
 }
 
-#svg{
-  width:100vw;
-  height:100vh;
+/* ------------------------------
+   SVG drawing surface
+------------------------------ */
+#svg {
+  width: 100vw;
+  height: 100vh;
 }
 
-
-/* toolbar */
-.tools{
+/* ------------------------------
+   Toolbar (vertical)
+------------------------------ */
+.tools {
   position: fixed;
-  top: 10px;
-  left: 10px;
+  top: 12px;
+  left: 12px;
   display: flex;
-  flex-direction: column;   /* stack downward */
-  gap: 8px;
-  z-index: 10;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
 }
 
-/* generic tool button */
-.tool{
+/* Generic tool slot */
+.tool {
   width: 32px;
   height: 32px;
-  padding: 0;
   border: 1px solid #aaa;
   background: #f2f2f2;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* eraser button: slightly bigger, nudged right */
-.eraser-tool{
-  width: 44px;   /* bigger but not insane */
-  height: 44px;
-  margin-left: 6px; /* subtle right offset */
-}
-
-/* eraser image scaling */
-.eraser-tool img{
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none; /* click goes to button */
-}
-
-/* color picker styled like tool */
-.color-tool{
-  width: 32px;
-  height: 32px;
+  cursor: pointer;
   padding: 0;
-  border: 1px solid #aaa;
-  background: #f2f2f2;
 }
 
-/* strip native color chrome */
-.color-tool::-webkit-color-swatch-wrapper{ padding: 0; }
-.color-tool::-webkit-color-swatch{ border: none; }
-.color-tool::-moz-color-swatch{ border: none; }
-
+/* Active state */
+.tool.active {
+  background: #d6d6d6;
 }
 
-/* boxes */
-.svg-box rect{
-  fill:none;
-  stroke:black;
-}
-
-.box-cover{
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .2s;
-}
-
-.svg-box.locked .box-cover{ opacity:1; }
-.svg-box.locked:hover .box-cover{ opacity:0; }
-
-.svg-box text{
-  font-size:14px;
-}
-
-.svg-box.locked text{
-  opacity:0;
-}
-
-.svg-box.locked:hover text{
-  opacity:1;
-}
-
-/* fake cursor */
-.has-fake-cursor *{
-  cursor:none !important;
-}
-
-#catCursor{
-  position:fixed;
-  width:32px;
-  height:32px;
-  pointer-events:none;
-  z-index:9999;
-  transform:translate(-4px,-4px);
-}
 /* ------------------------------
-   TigerNet header (TOP RIGHT)
+   Eraser (IMAGE ITSELF, NO BUTTON)
 ------------------------------ */
-.tn-header{
-  position: fixed;
-  top: 20px;
-  right: 18px;
-  z-index: 3000;
-}
-
-.tn-logo img{
-  max-width: 260px;
-  height: auto;
-  display: block;
-  opacity: .9;
-}
+.eraser-tool {
