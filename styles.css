@@ -1,37 +1,43 @@
-/* ------------------------------
-   Base reset
------------------------------- */
-* {
-  box-sizing: border-box;
-}
+/* ===== RESET ===== */
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
   height: 100%;
+  background: #fff;
 }
 
-/* ------------------------------
-   SVG drawing surface
------------------------------- */
+/* ===== SVG ===== */
 #svg {
   width: 100vw;
   height: 100vh;
 }
 
-/* ------------------------------
-   Toolbar (vertical)
------------------------------- */
+/* ===== HEADER ===== */
+.tn-header {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 3000;
+}
+
+.tn-logo {
+  max-width: 240px;
+  opacity: 0.9;
+}
+
+/* ===== TOOLBAR ===== */
 .tools {
   position: fixed;
-  top: 12px;
-  left: 12px;
+  top: 14px;
+  left: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 1000;
+  z-index: 2000;
 }
 
-/* Generic tool slot */
+/* base tool */
 .tool {
   width: 32px;
   height: 32px;
@@ -41,15 +47,49 @@ html, body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+.tool.active {
+  background: #d8d8d8;
+}
+
+/* ===== ERASER (IMAGE-AS-CONTROL) ===== */
+.eraser-tool {
+  width: 72px;
+  height: 48px;
+  margin-left: 6px;
+  border: none;
+  background:
+    center / contain no-repeat url("./eraser.webp");
+}
+
+/* ===== COLOR PICKER ===== */
+.color-tool {
+  width: 32px;
+  height: 32px;
   padding: 0;
 }
 
-/* Active state */
-.tool.active {
-  background: #d6d6d6;
+.color-tool::-webkit-color-swatch-wrapper { padding: 0; }
+.color-tool::-webkit-color-swatch { border: none; }
+.color-tool::-moz-color-swatch { border: none; }
+
+/* ===== BOX STYLES ===== */
+.svg-box rect {
+  fill: none;
+  stroke: #000;
 }
 
-/* ------------------------------
-   Eraser (IMAGE ITSELF, NO BUTTON)
------------------------------- */
-.eraser-tool {
+.box-cover {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.svg-box.locked .box-cover { opacity: 1; }
+.svg-box.locked:hover .box-cover { opacity: 0; }
+
+.svg-box text {
+  font-size: 14px;
+}
+
