@@ -19,23 +19,23 @@
 
   <!-- TOOLS -->
   <div class="tools">
-    <!-- Box tool -->
-    <button class="tool active" data-tool="box" title="Box">□</button>
+  <!-- Box tool -->
+  <div class="tool tool-box active" data-tool="box" title="Box">□</div>
 
-    <!-- Eraser: IMAGE is the button -->
-    <button class="tool eraser-tool" data-tool="erase" title="Eraser">
-      <img src="./eraser.webp" alt="Erase">
-    </button>
-
-    <!-- Color picker -->
-    <input
-      id="colorPicker"
-      type="color"
-      class="tool color-tool"
-      value="#000000"
-      title="Fill color"
-    />
+  <!-- Eraser (image-only control) -->
+  <div class="tool eraser-tool" data-tool="erase" title="Eraser">
+    <img src="./eraser.webp" alt="Eraser">
   </div>
+
+  <!-- Color picker -->
+  <input
+    id="colorPicker"
+    type="color"
+    class="tool color-tool"
+    value="#000000"
+    title="Fill color"
+  />
+</div>
 
   <!-- DRAWING SURFACE -->
   <svg id="svg"></svg>
