@@ -89,7 +89,7 @@ html, body {
 ------------------------------ */
 .tn-header{
   position: fixed;
-  top: 18px;
+  top: 20px;
   right: 18px;
   z-index: 3000;
 }
