@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>TIGERNETWORK</title>
 
-  <!--  LOAD CSS -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
 
-  <!-- HEADER / TITLE BACK -->
+  <!-- HEADER -->
   <div class="tn-header">
     <a class="tn-logo" href="/">
       <img src="./tigernet.png" alt="TigerNet" />
@@ -20,23 +19,22 @@
 
   <!-- TOOLS -->
   <div class="tools">
-    <button class="tool active" data-tool="box">□</button>
-    <button class="tool" data-tool="text">T</button>
-    
-  
-    <img src="./eraser.webp" alt="Eraser">
-</button>
+    <!-- Box tool -->
+    <button class="tool active" data-tool="box" title="Box">□</button>
 
-  
-    
-<input
-  id="colorPicker"
-  type="color"
-  class="tool color-tool"
-  value="#000000"
-  title="Fill color"
-/>
+    <!-- Eraser tool (medium size, not huge) -->
+    <button class="tool eraser-tool" data-tool="erase" title="Eraser">
+      <img src="./eraser.webp" alt="Eraser">
+    </button>
 
+    <!-- Color picker -->
+    <input
+      id="colorPicker"
+      type="color"
+      class="tool color-tool"
+      value="#000000"
+      title="Fill color"
+    />
   </div>
 
   <!-- DRAWING SURFACE -->
@@ -46,6 +44,5 @@
   <img id="catCursor" src="./32.png" alt="" />
 
   <script src="app.js" defer></script>
-
 </body>
 </html>
