@@ -55,8 +55,8 @@ html, body {
 
 /* ===== ERASER (IMAGE-AS-CONTROL) ===== */
 .eraser-tool {
-  width: 72px;
-  height: 48px;
+  width: 200px;
+  height: 350px;
   margin-left: 6px;
   border: none;
   background:
