@@ -23,6 +23,25 @@ html, body {
 .tool{
   width:32px;
   height:32px;
+  /* color picker styled like tool button */
+.color-tool{
+  padding: 0;
+  border: 1px solid #aaa;
+  background: #f2f2f2;
+}
+
+/* remove native color input chrome */
+.color-tool::-webkit-color-swatch-wrapper{
+  padding: 0;
+}
+.color-tool::-webkit-color-swatch{
+  border: none;
+}
+
+/* Firefox */
+.color-tool::-moz-color-swatch{
+  border: none;
+}
 }
 
 /* boxes */
