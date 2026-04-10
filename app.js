@@ -1,10 +1,6 @@
 // --------------------------------
 // Fake cursor (stable)
 // --------------------------------
-
-let drawingPath = null;
-let activeBox = null;
-
 const colorPicker = document.getElementById("colorPicker");
 const rgbValue = document.getElementById("rgbValue");
 
@@ -17,16 +13,14 @@ function hexToRgb(hex) {
 }
 
 colorPicker.addEventListener("input", () => {
-  if (rgbValue) {
-    rgbValue.textContent = hexToRgb(colorPicker.value);
-  }
+  if (rgbValue) rgbValue.textContent = hexToRgb(colorPicker.value);
 });
 
 const cat = document.getElementById("catCursor");
 if (cat) {
-  document.documentElement.classList.add("has-fake-cursor");
-  cat.style.left = "50vw";
-  cat.style.top  = "50vh";
+  cat.style.position = "fixed";
+  cat.style.pointerEvents = "none";
+  cat.style.zIndex = "9999";
 
   window.addEventListener("pointermove", e => {
     cat.style.left = e.clientX + "px";
@@ -46,46 +40,67 @@ let drawing = false;
 let start = null;
 let currentBox = null;
 
-tools.forEach(b=>{
-  b.onclick = ()=>{
-    tools.forEach(x=>x.classList.remove("active"));
+// drawing-in-box state
+let drawingPath = null;
+let activeBox = null;
+
+tools.forEach(b => {
+  b.onclick = () => {
+    tools.forEach(x => x.classList.remove("active"));
     b.classList.add("active");
     tool = b.dataset.tool;
   };
 });
 
-const svgEl = (t,a={})=>{
+const svgEl = (t,a={}) => {
   const el = document.createElementNS(NS,t);
   for(const k in a) el.setAttribute(k,a[k]);
   return el;
 };
 
-const pos = e=>{
+const pos = e => {
   const r = svg.getBoundingClientRect();
-  return {x:e.clientX-r.left,y:e.clientY-r.top};
+  return { x:e.clientX-r.left, y:e.clientY-r.top };
 };
+
+// --------------------------------
+// Draw helpers
+// --------------------------------
+function startPath(x, y) {
+  const path = svgEl("path", {
+    stroke: "black",
+    "stroke-width": 2,
+    fill: "none",
+    "vector-effect": "non-scaling-stroke"
+  });
+  path.setAttribute("d", `M ${x} ${y}`);
+  return path;
+}
+
+function extendPath(path, x, y) {
+  path.setAttribute("d",
+    path.getAttribute("d") + ` L ${x} ${y}`
+  );
+}
 
 // --------------------------------
 // Pointer down
 // --------------------------------
-svg.addEventListener("pointerdown", e=>{
+svg.addEventListener("pointerdown", e => {
   const p = pos(e);
 
-  // TEXT
-  if (tool === "text") {
+  // DRAW INSIDE BOX
+  if (tool === "draw") {
     const box = e.target.closest(".svg-box");
     if (!box || box.classList.contains("locked")) return;
 
-    const t = box.querySelector("text");
-    const next = prompt("Text:", t.textContent || "");
-    if (next !== null) t.textContent = next;
-    return;
-  }
+    activeBox = box;
+    const drawLayer = box.querySelector(".box-draw");
+    if (!drawLayer) return;
 
-  // FILL
-  if (tool === "fill") {
-    const box = e.target.closest(".svg-box");
-    if (box) box.classList.toggle("locked");
+    drawing = true;
+    drawingPath = startPath(p.x, p.y);
+    drawLayer.appendChild(drawingPath);
     return;
   }
 
@@ -94,34 +109,45 @@ svg.addEventListener("pointerdown", e=>{
     drawing = true;
     start = p;
 
-    const g = svgEl("g",{class:"svg-box"});
-    const outline = svgEl("rect");
-    const text = svgEl("text",{x:p.x+6,y:p.y+18});
-    const cover = svgEl("rect",{class:"box-cover",fill:"black"});
+    const g = svgEl("g",{ class:"svg-box" });
 
-    g.append(outline,text,cover);
+    const outline = svgEl("rect");
+
+    // clip path for drawing
+    const clipId = "clip-" + crypto.randomUUID();
+    const clipPath = svgEl("clipPath",{ id:clipId });
+    const clipRect = svgEl("rect");
+    clipPath.appendChild(clipRect);
+
+    const defs = svgEl("defs");
+    defs.appendChild(clipPath);
+
+    const drawLayer = svgEl("g",{
+      class:"box-draw",
+      "clip-path":`url(#${clipId})`
+    });
+
+    const text = svgEl("text",{ x:p.x+6, y:p.y+18 });
+    const cover = svgEl("rect",{ class:"box-cover", fill:"black" });
+
+    g.append(defs, outline, drawLayer, text, cover);
     svg.appendChild(g);
     currentBox = g;
   }
-  
-let lastPoint = null;
-
-function startPath(x, y) {
-  const path = svgEl("path");
-  path.setAttribute("d", `M ${x} ${y}`);
-  return path;
-}
-
-function extendPath(path, x, y) {
-  path.setAttribute("d", path.getAttribute("d") + ` L ${x} ${y}`);
-}
-
 });
 
 // --------------------------------
 // Pointer move
 // --------------------------------
-svg.addEventListener("pointermove", e=>{
+svg.addEventListener("pointermove", e => {
+
+  // DRAW MOVE
+  if (tool === "draw" && drawing && drawingPath) {
+    const p = pos(e);
+    extendPath(drawingPath, p.x, p.y);
+    return;
+  }
+
   if (!drawing || !currentBox) return;
   const p = pos(e);
 
@@ -130,25 +156,35 @@ svg.addEventListener("pointermove", e=>{
   const w = Math.abs(start.x-p.x);
   const h = Math.abs(start.y-p.y);
 
-  const o = currentBox.children[0];
-  const c = currentBox.children[2];
-  const t = currentBox.children[1];
+  const outline = currentBox.querySelector("rect:not(.box-cover)");
+  const cover = currentBox.querySelector(".box-cover");
+  const clipRect = currentBox.querySelector("clipPath rect");
+  const text = currentBox.querySelector("text");
 
-  [o,c].forEach(r=>{
+  [outline, cover, clipRect].forEach(r => {
     r.setAttribute("x",x);
     r.setAttribute("y",y);
     r.setAttribute("width",w);
     r.setAttribute("height",h);
   });
 
-  t.setAttribute("x",x+6);
-  t.setAttribute("y",y+18);
+  text.setAttribute("x", x+6);
+  text.setAttribute("y", y+18);
 });
 
 // --------------------------------
 // Pointer up
 // --------------------------------
 svg.addEventListener("pointerup", () => {
+
+  // END DRAW
+  if (tool === "draw") {
+    drawing = false;
+    drawingPath = null;
+    activeBox = null;
+    return;
+  }
+
   if (!drawing || !currentBox) return;
 
   drawing = false;
@@ -159,7 +195,6 @@ svg.addEventListener("pointerup", () => {
   const w = +rect.getAttribute("width");
   const h = +rect.getAttribute("height");
 
-  // remove tiny accidental boxes
   if (w < 12 || h < 12) {
     currentBox.remove();
     currentBox = null;
@@ -167,35 +202,27 @@ svg.addEventListener("pointerup", () => {
     return;
   }
 
-  // prompt for text
   const userText = prompt("Add text to this box:");
   if (userText) {
     const timestamp = new Date().toLocaleString();
-
-    textEl.textContent = "";
-
-    [userText, timestamp].forEach((line, i) => {
-      const tspan = document.createElementNS(NS, "tspan");
-      tspan.setAttribute("x", textEl.getAttribute("x"));
-      tspan.setAttribute("dy", i === 0 ? "0em" : "1.2em");
-      tspan.textContent = line;
-      textEl.appendChild(tspan);
-    });
+    textEl.textContent = `${userText}\n${timestamp}`;
   }
 
   currentBox = null;
   start = null;
 });
-svg.addEventListener("dblclick", (e) => {
+
+// --------------------------------
+// Lock / fill on double click
+// --------------------------------
+svg.addEventListener("dblclick", e => {
   const box = e.target.closest(".svg-box");
   if (!box) return;
 
   const cover = box.querySelector(".box-cover");
   if (!cover) return;
 
-  // set fill color from picker
   cover.setAttribute("fill", colorPicker.value);
-
-  // toggle filled state
   box.classList.toggle("locked");
 });
+``
