@@ -13,7 +13,9 @@ function hexToRgb(hex) {
 }
 
 colorPicker.addEventListener("input", () => {
-  rgbValue.textContent = hexToRgb(colorPicker.value);
+  if (rgbValue) {
+    rgbValue.textContent = hexToRgb(colorPicker.value);
+  }
 });
 
 const cat = document.getElementById("catCursor");
