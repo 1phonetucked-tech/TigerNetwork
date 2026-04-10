@@ -1,6 +1,10 @@
 // --------------------------------
 // Fake cursor (stable)
 // --------------------------------
+
+let drawingPath = null;
+let activeBox = null;
+
 const colorPicker = document.getElementById("colorPicker");
 const rgbValue = document.getElementById("rgbValue");
 
