@@ -103,6 +103,19 @@ svg.addEventListener("pointerdown", e=>{
     svg.appendChild(g);
     currentBox = g;
   }
+  
+let lastPoint = null;
+
+function startPath(x, y) {
+  const path = svgEl("path");
+  path.setAttribute("d", `M ${x} ${y}`);
+  return path;
+}
+
+function extendPath(path, x, y) {
+  path.setAttribute("d", path.getAttribute("d") + ` L ${x} ${y}`);
+}
+
 });
 
 // --------------------------------
