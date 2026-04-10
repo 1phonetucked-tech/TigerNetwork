@@ -93,3 +93,12 @@ html, body {
   font-size: 14px;
 }
 
+#catCursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+}
+
