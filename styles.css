@@ -109,3 +109,7 @@ html, body {
   vector-effect: non-scaling-stroke;
 }
 
+html, body, #svg {
+  cursor: none;
+}
+
