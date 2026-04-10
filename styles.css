@@ -102,3 +102,10 @@ html, body {
   z-index: 9999;
 }
 
+.box-draw path {
+  fill: none;
+  stroke: black;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
