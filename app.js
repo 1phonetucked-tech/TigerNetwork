@@ -90,9 +90,15 @@ svg.addEventListener("pointerdown", e => {
   const p = pos(e);
 
   // DRAW INSIDE BOX
-  if (tool === "draw") {
-    const box = e.target.closest(".svg-box");
-    if (!box || box.classList.contains("locked")) return;
+ 
+if (tool === "draw") {
+  const box = e.target.closest(".svg-box");
+
+  // if clicking empty space, do nothing BUT allow box creation later
+  if (!box) return;
+
+  if (box.classList.contains("locked")) return;
+
 
     activeBox = box;
     const drawLayer = box.querySelector(".box-draw");
