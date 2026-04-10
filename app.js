@@ -108,6 +108,17 @@ if (tool === "draw") {
   // IMPORTANT: no return here
 }
 
+if (tool === "draw") {
+  drawing = false;
+  drawingPath = null;
+  activeBox = null;
+
+  tool = "box";
+  document.querySelector('[data-tool="box"]')?.classList.add("active");
+
+  return;
+}
+
   // BOX
   if (tool === "box") {
     drawing = true;
