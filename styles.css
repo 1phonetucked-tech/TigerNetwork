@@ -7,10 +7,20 @@ html, body {
   background: #fff;
 }
 
-/* ===== SVG ===== */
-#svg {
+/* ===== CANVAS ===== */
+#canvas{
+  position: fixed;
+  inset: 0;
   width: 100vw;
   height: 100vh;
+  display: block;
+  z-index: 1;
+  touch-action: none; /* key for pointer drawing */
+}
+
+/* Hide system cursor */
+html, body {
+  cursor: none;
 }
 
 /* ===== HEADER ===== */
