@@ -63,15 +63,27 @@ html, body {
   background: #d8d8d8;
 }
 
-/* ===== ERASER (IMAGE-AS-CONTROL) ===== */
 .eraser-tool {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: center / contain no-repeat url("./eraser.webp");
+  position: relative;
+  cursor: pointer;
+}
+
+/* Big visual eraser ONLY — does not block canvas */
+.eraser-tool::after {
+  content: "";
+  position: absolute;
+  left: 40px;
+  top: -10px;
   width: 200px;
   height: 350px;
-  margin-left: 6px;
-  border: none;
-  background:
-    center / contain no-repeat url("./eraser.webp");
+  background: center / contain no-repeat url("./eraser.webp");
+  pointer-events: none;
 }
+
 
 /* ===== COLOR PICKER ===== */
 .color-tool {
@@ -83,43 +95,3 @@ html, body {
 .color-tool::-webkit-color-swatch-wrapper { padding: 0; }
 .color-tool::-webkit-color-swatch { border: none; }
 .color-tool::-moz-color-swatch { border: none; }
-
-/* ===== BOX STYLES ===== */
-.svg-box rect {
-  fill: none;
-  stroke: #000;
-}
-
-.box-cover {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-.svg-box.locked .box-cover { opacity: 1; }
-.svg-box.locked:hover .box-cover { opacity: 0; }
-
-.svg-box text {
-  font-size: 14px;
-}
-
-#catCursor {
-  position: fixed;
-  left: 0;
-  top: 0;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 9999;
-}
-
-.box-draw path {
-  fill: none;
-  stroke: black;
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-}
-
-html, body, #svg {
-  cursor: none;
-}
-
