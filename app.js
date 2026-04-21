@@ -102,7 +102,7 @@ function tick() {
 
   for (const b of boxes) {
     if (Math.abs(b.coverAlpha - b.coverTarget) > 0.01) {
-      b.coverAlpha = lerp(b.coverAlpha, b.coverTarget, 0.22);
+      b.coverAlpha = lerp(b.coverAlpha, b.coverTarget, 0.35);
       needsMore = true;
     } else {
       b.coverAlpha = b.coverTarget;
@@ -410,15 +410,16 @@ canvas.addEventListener("dblclick", (e) => {
 
   b.locked = !b.locked;
 
-  if (b.locked) {
-    b.fillColor = colorPicker?.value || b.fillColor || "#000";
-    // If hovered, reveal; otherwise hide
-    b.coverTarget = b.id === hoveredBoxId ? 0 : 1;
-  } else {
-    // unlocked => no cover
-    b.coverTarget = 0;
-    b.coverAlpha = 0;
-  }
+if (b.locked) {
+  b.fillColor = colorPicker?.value || b.fillColor || "#000";
+
+  // FORCE it to be filled immediately when locked
+  b.coverAlpha = 1;
+  b.coverTarget = 1;
+
+  // Then if you're currently hovering it, let hover logic fade it out
+  updateHover(p);
+}
 
   requestAnim();
 });
