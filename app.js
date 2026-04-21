@@ -1,59 +1,23 @@
+// ============================================================
+// TIGERNETWORK — Canvas Boxes + Draw + Erase + Lock + Hover Reveal
+// ============================================================
+
 // --------------------------------
 // UI refs
 // --------------------------------
 const colorPicker = document.getElementById("colorPicker");
 const cat = document.getElementById("catCursor");
 const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
+const ctx = canvas.getContext("2d", { alpha: true });
 const tools = document.querySelectorAll(".tool[data-tool]");
 
-let tool = "box";
-tools.forEach(btn => {
-  btn.onclick = () => {
-    const next = btn.dataset.tool;
-    if (!next) return;
-    tools.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    tool = next;
-  };
-});
-
 // --------------------------------
-// Fake cursor
-// --------------------------------
-if (cat) {
-  cat.style.position = "fixed";
-  cat.style.pointerEvents = "none";
-  cat.style.zIndex = "9999";
-  window.addEventListener("pointermove", e => {
-    cat.style.left = e.clientX + "px";
-    cat.style.top  = e.clientY + "px";
-  });
-}
-
-// --------------------------------
-// Canvas sizing (retina-safe)
-// --------------------------------
-function resizeCanvas() {
-  const dpr = window.devicePixelRatio || 1;
-  const w = Math.floor(window.innerWidth * dpr);
-  const h = Math.floor(window.innerHeight * dpr);
-  canvas.width = w;
-  canvas.height = h;
-  canvas.style.width = window.innerWidth + "px";
-  canvas.style.height = window.innerHeight + "px";
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // draw in CSS pixels
-  redraw();
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-
-// --------------------------------
-// Data model
+// Data model  ✅ MUST BE BEFORE resizeCanvas()/redraw()
 // --------------------------------
 const boxes = [];
 let hoveredBoxId = null;
+
+let tool = "box";
 
 let drawingBox = false;
 let boxStart = null;
@@ -67,11 +31,38 @@ let erasing = false;
 const ERASER_R = 10;
 
 // --------------------------------
+// Tool switching
+// --------------------------------
+tools.forEach((btn) => {
+  btn.onclick = () => {
+    const next = btn.dataset.tool;
+    if (!next) return;
+    tools.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    tool = next;
+  };
+});
+
+// --------------------------------
+// Fake cursor
+// --------------------------------
+if (cat) {
+  cat.style.position = "fixed";
+  cat.style.pointerEvents = "none";
+  cat.style.zIndex = "9999";
+
+  window.addEventListener("pointermove", (e) => {
+    cat.style.left = e.clientX + "px";
+    cat.style.top = e.clientY + "px";
+  });
+}
+
+// --------------------------------
 // Helpers
 // --------------------------------
 function pos(e) {
-  // because ctx is in CSS pixels (we setTransform to dpr),
-  // we can just use clientX/clientY directly.
+  // we draw in CSS pixels (see setTransform in resizeCanvas),
+  // so clientX/clientY map directly.
   return { x: e.clientX, y: e.clientY };
 }
 
@@ -80,7 +71,7 @@ function insideBox(p, b) {
 }
 
 function findBoxAt(p) {
-  // topmost first (last drawn is visually "on top")
+  // Top-most first (last drawn is on top)
   for (let i = boxes.length - 1; i >= 0; i--) {
     if (insideBox(p, boxes[i])) return boxes[i];
   }
@@ -95,7 +86,11 @@ function lerp(a, b, t) {
   return a + (b - a) * t;
 }
 
+// --------------------------------
+// Animation loop (for hover reveal fade)
+// --------------------------------
 let animating = false;
+
 function requestAnim() {
   if (animating) return;
   animating = true;
@@ -105,7 +100,6 @@ function requestAnim() {
 function tick() {
   let needsMore = false;
 
-  // animate cover alpha toward target
   for (const b of boxes) {
     if (Math.abs(b.coverAlpha - b.coverTarget) > 0.01) {
       b.coverAlpha = lerp(b.coverAlpha, b.coverTarget, 0.22);
@@ -131,25 +125,25 @@ function redraw() {
   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
   for (const b of boxes) {
-    // outline
+    // Outline (always hollow)
     ctx.save();
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 1;
     ctx.strokeRect(b.x, b.y, b.w, b.h);
     ctx.restore();
 
-    // contents (strokes + text) live "inside"
-    // we clip to the box like your SVG clipPath
+    // Clip contents to inside box
     ctx.save();
     ctx.beginPath();
     ctx.rect(b.x, b.y, b.w, b.h);
     ctx.clip();
 
-    // draw strokes
+    // Draw strokes
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     for (const s of b.strokes) {
-      if (s.points.length < 2) continue;
+      if (!s.points || s.points.length < 2) continue;
+
       ctx.save();
       ctx.strokeStyle = s.color;
       ctx.lineWidth = s.width;
@@ -162,7 +156,7 @@ function redraw() {
       ctx.restore();
     }
 
-    // text
+    // Text
     if (b.text) {
       ctx.save();
       ctx.fillStyle = "#000";
@@ -178,7 +172,7 @@ function redraw() {
 
     ctx.restore(); // end clip
 
-    // cover (this sits ABOVE contents, like your .box-cover rect)
+    // Cover (only visible when locked & alpha > 0)
     if (b.locked && b.coverAlpha > 0) {
       ctx.save();
       ctx.globalAlpha = b.coverAlpha;
@@ -188,7 +182,7 @@ function redraw() {
     }
   }
 
-  // temp box preview
+  // Temp box preview (during box drawing)
   if (tempBox) {
     ctx.save();
     ctx.setLineDash([6, 4]);
@@ -197,6 +191,29 @@ function redraw() {
     ctx.restore();
   }
 }
+
+// --------------------------------
+// Canvas sizing (retina-safe)
+// --------------------------------
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.floor(window.innerWidth * dpr);
+  const h = Math.floor(window.innerHeight * dpr);
+
+  canvas.width = w;
+  canvas.height = h;
+
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
+
+  // Draw using CSS pixels
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  redraw();
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
 
 // --------------------------------
 // Hover -> reveal logic
@@ -208,146 +225,16 @@ function updateHover(p) {
 
   hoveredBoxId = nextId;
 
-  // set cover targets based on hover state
+  // When locked:
+  // - if hovered => coverTarget 0 (reveal)
+  // - else => coverTarget 1 (hide)
   for (const b of boxes) {
     if (!b.locked) continue;
-    b.coverTarget = (b.id === hoveredBoxId) ? 0 : 1;
+    b.coverTarget = b.id === hoveredBoxId ? 0 : 1;
   }
 
   requestAnim();
 }
-
-// --------------------------------
-// Pointer events
-// --------------------------------
-canvas.addEventListener("pointerdown", e => {
-  canvas.setPointerCapture(e.pointerId);
-  const p = pos(e);
-
-  // always update hover on interaction
-  updateHover(p);
-
-  if (tool === "box") {
-    drawingBox = true;
-    boxStart = p;
-    tempBox = { x: p.x, y: p.y, w: 0, h: 0 };
-    redraw();
-    return;
-  }
-
-  if (tool === "draw") {
-    const b = findBoxAt(p);
-    if (!b || b.locked) return;
-    drawingStroke = true;
-    currentBoxId = b.id;
-    currentStroke = { color: "#000", width: 2, points: [p] };
-    b.strokes.push(currentStroke);
-    redraw();
-    return;
-  }
-
-  if (tool === "erase") {
-    erasing = true;
-    eraseAt(p);
-    return;
-  }
-});
-
-canvas.addEventListener("pointermove", e => {
-  const p = pos(e);
-
-  updateHover(p);
-
-  if (drawingBox && boxStart && tempBox) {
-    const x = Math.min(boxStart.x, p.x);
-    const y = Math.min(boxStart.y, p.y);
-    const w = Math.abs(boxStart.x - p.x);
-    const h = Math.abs(boxStart.y - p.y);
-    tempBox = { x, y, w, h };
-    redraw();
-    return;
-  }
-
-  if (drawingStroke && currentStroke) {
-    currentStroke.points.push(p);
-    redraw();
-    return;
-  }
-
-  if (erasing) {
-    eraseAt(p);
-    return;
-  }
-});
-
-canvas.addEventListener("pointerup", e => {
-  const p = pos(e);
-  updateHover(p);
-
-  if (drawingStroke) {
-    drawingStroke = false;
-    currentStroke = null;
-    currentBoxId = null;
-    return;
-  }
-
-  if (erasing) {
-    erasing = false;
-    return;
-  }
-
-  if (!drawingBox) return;
-  drawingBox = false;
-
-  if (!tempBox || tempBox.w < 12 || tempBox.h < 12) {
-    tempBox = null;
-    redraw();
-    return;
-  }
-
-  const t = prompt("Add text:");
-  const txt = t ? `${t}\n${nowStamp()}` : "";
-
-  const newBox = {
-    id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2),
-    x: tempBox.x,
-    y: tempBox.y,
-    w: tempBox.w,
-    h: tempBox.h,
-    strokes: [],
-    text: txt,
-    locked: false,
-    fillColor: colorPicker?.value || "#000000",
-    coverAlpha: 0,
-    coverTarget: 0
-  };
-
-  boxes.push(newBox);
-  tempBox = null;
-  redraw();
-});
-
-// --------------------------------
-// Double click: lock / fill
-// --------------------------------
-canvas.addEventListener("dblclick", e => {
-  const p = pos(e);
-  const b = findBoxAt(p);
-  if (!b) return;
-
-  b.locked = !b.locked;
-
-  // when locking, capture current picker color
-  if (b.locked) {
-    b.fillColor = colorPicker?.value || b.fillColor || "#000";
-    // not hovered => cover on, hovered => cover off
-    b.coverTarget = (b.id === hoveredBoxId) ? 0 : 1;
-  } else {
-    b.coverTarget = 0;
-  }
-
-  requestAnim();
-});
 
 // --------------------------------
 // Eraser: removes points within radius (only in unlocked boxes)
@@ -361,15 +248,18 @@ function eraseAt(p) {
 
     for (let si = b.strokes.length - 1; si >= 0; si--) {
       const s = b.strokes[si];
-      // filter out points near eraser
+      if (!s.points || s.points.length === 0) continue;
+
       const before = s.points.length;
-      s.points = s.points.filter(pt => {
+      s.points = s.points.filter((pt) => {
         const dx = pt.x - p.x;
         const dy = pt.y - p.y;
-        return (dx*dx + dy*dy) > (ERASER_R*ERASER_R);
+        return dx * dx + dy * dy > ERASER_R * ERASER_R;
       });
 
       if (s.points.length !== before) changed = true;
+
+      // remove stroke if too short
       if (s.points.length < 2) {
         b.strokes.splice(si, 1);
         changed = true;
@@ -379,3 +269,156 @@ function eraseAt(p) {
 
   if (changed) redraw();
 }
+
+// --------------------------------
+// Pointer events
+// --------------------------------
+canvas.addEventListener("pointerdown", (e) => {
+  canvas.setPointerCapture(e.pointerId);
+  const p = pos(e);
+
+  updateHover(p);
+
+  // BOX tool
+  if (tool === "box") {
+    drawingBox = true;
+    boxStart = p;
+    tempBox = { x: p.x, y: p.y, w: 0, h: 0 };
+    redraw();
+    return;
+  }
+
+  // DRAW tool (only inside unlocked boxes)
+  if (tool === "draw") {
+    const b = findBoxAt(p);
+    if (!b || b.locked) return;
+
+    drawingStroke = true;
+    currentBoxId = b.id;
+
+    currentStroke = {
+      color: "#000",
+      width: 2,
+      points: [p],
+    };
+
+    b.strokes.push(currentStroke);
+    redraw();
+    return;
+  }
+
+  // ERASE tool (only inside unlocked boxes)
+  if (tool === "erase") {
+    erasing = true;
+    eraseAt(p);
+    return;
+  }
+});
+
+canvas.addEventListener("pointermove", (e) => {
+  const p = pos(e);
+
+  updateHover(p);
+
+  // Drawing a box
+  if (drawingBox && boxStart && tempBox) {
+    const x = Math.min(boxStart.x, p.x);
+    const y = Math.min(boxStart.y, p.y);
+    const w = Math.abs(boxStart.x - p.x);
+    const h = Math.abs(boxStart.y - p.y);
+
+    tempBox = { x, y, w, h };
+    redraw();
+    return;
+  }
+
+  // Drawing inside a box
+  if (drawingStroke && currentStroke) {
+    currentStroke.points.push(p);
+    redraw();
+    return;
+  }
+
+  // Erasing
+  if (erasing) {
+    eraseAt(p);
+    return;
+  }
+});
+
+canvas.addEventListener("pointerup", (e) => {
+  const p = pos(e);
+  updateHover(p);
+
+  // End stroke
+  if (drawingStroke) {
+    drawingStroke = false;
+    currentStroke = null;
+    currentBoxId = null;
+    return;
+  }
+
+  // End erase
+  if (erasing) {
+    erasing = false;
+    return;
+  }
+
+  // End box
+  if (!drawingBox) return;
+  drawingBox = false;
+
+  // Too small => cancel
+  if (!tempBox || tempBox.w < 12 || tempBox.h < 12) {
+    tempBox = null;
+    redraw();
+    return;
+  }
+
+  const t = prompt("Add text:");
+  const txt = t ? `${t}\n${nowStamp()}` : "";
+
+  const id =
+    crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+
+  const newBox = {
+    id,
+    x: tempBox.x,
+    y: tempBox.y,
+    w: tempBox.w,
+    h: tempBox.h,
+    strokes: [],
+    text: txt,
+    locked: false,
+    fillColor: colorPicker?.value || "#000000",
+    coverAlpha: 0,
+    coverTarget: 0,
+  };
+
+  boxes.push(newBox);
+  tempBox = null;
+  redraw();
+});
+
+// --------------------------------
+// Double click: lock/unlock + fill cover color
+// --------------------------------
+canvas.addEventListener("dblclick", (e) => {
+  const p = pos(e);
+  const b = findBoxAt(p);
+  if (!b) return;
+
+  b.locked = !b.locked;
+
+  if (b.locked) {
+    b.fillColor = colorPicker?.value || b.fillColor || "#000";
+    // If hovered, reveal; otherwise hide
+    b.coverTarget = b.id === hoveredBoxId ? 0 : 1;
+  } else {
+    // unlocked => no cover
+    b.coverTarget = 0;
+    b.coverAlpha = 0;
+  }
+
+  requestAnim();
+});
