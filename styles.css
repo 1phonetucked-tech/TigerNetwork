@@ -38,7 +38,7 @@ html, body {
 .tools {
   position: fixed;
   top: 200px;          /* below logo */
-  right: 10px;         /* align with logo */
+  right: 25px;         /* align with logo */
   display: flex;
   flex-direction: column;
   gap: 10px;
