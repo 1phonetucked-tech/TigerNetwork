@@ -37,8 +37,8 @@ html, body {
 /* toolbar */
 .tools {
   position: fixed;
-  top: 150px;          /* below logo */
-  right: 40px;         /* align with logo */
+  top: 200px;          /* below logo */
+  right: 65px;         /* align with logo */
   display: flex;
   flex-direction: column;
   gap: 10px;
