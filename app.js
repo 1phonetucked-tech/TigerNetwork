@@ -31,6 +31,33 @@ let erasing = false;
 const ERASER_R = 10;
 
 // --------------------------------
+// DEMO multi-user simulation (max 4 users, no backend)
+// --------------------------------
+const GLOBAL_COUNTER_KEY = "tigernetwork_demo_user_counter";
+const SESSION_USER_KEY = "tigernetwork_demo_session_user";
+
+function getDemoUserNumber() {
+  // Keep the same user for this tab
+  let sessionUser = sessionStorage.getItem(SESSION_USER_KEY);
+  if (sessionUser) return sessionUser;
+
+  // Increment global counter
+  let global = parseInt(localStorage.getItem(GLOBAL_COUNTER_KEY) || "0", 10);
+  global += 1;
+  localStorage.setItem(GLOBAL_COUNTER_KEY, global);
+
+  // Limit to 4 demo users
+  const userNumber = ((global - 1) % 4) + 1;
+
+  sessionStorage.setItem(SESSION_USER_KEY, userNumber);
+  return userNumber;
+}
+
+const USER_TAG = `@${getDemoUserNumber()}`;
+console.log("Demo user:", USER_TAG);
+
+
+// --------------------------------
 // Tool switching
 // --------------------------------
 tools.forEach((btn) => {
