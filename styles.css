@@ -34,16 +34,18 @@ html, body {
   opacity: 0.9;
 }
 
-/* toolbar */
+/* aligned toolbar  */
 .tools {
   position: fixed;
-  top: 120px;      /* tighter under logo */
-  right: 22px;     /* visually centered under logo */
+  top: 118px;        /* tighter under logo */
+  right: 10px;       /* pull tools closer to logo silhouette */
   display: flex;
   flex-direction: column;
   gap: 10px;
   z-index: 2000;
+
 }
+
 /* TOOL BUTTONS */
 .tool {
   width: 32px;
