@@ -12,7 +12,7 @@ const ctx = canvas.getContext("2d", { alpha: true });
 const tools = document.querySelectorAll(".tool[data-tool]");
 
 // --------------------------------
-// Data model  ✅ MUST BE BEFORE resizeCanvas()/redraw()
+// Data model 
 // --------------------------------
 const boxes = [];
 let hoveredBoxId = null;
@@ -88,7 +88,7 @@ if (cat) {
 // Helpers
 // --------------------------------
 function pos(e) {
-  // we draw in CSS pixels (see setTransform in resizeCanvas),
+  // draw in CSS pixels (see setTransform in resizeCanvas),
   // so clientX/clientY map directly.
   return { x: e.clientX, y: e.clientY };
 }
@@ -377,7 +377,6 @@ canvas.addEventListener("pointerup", (e) => {
   const p = pos(e);
   updateHover(p);
 
-  // End stroke
   if (drawingStroke) {
     drawingStroke = false;
     currentStroke = null;
@@ -385,17 +384,15 @@ canvas.addEventListener("pointerup", (e) => {
     return;
   }
 
-  // End erase
   if (erasing) {
     erasing = false;
     return;
   }
 
-  // End box
   if (!drawingBox) return;
   drawingBox = false;
 
-  // Too small => cancel
+  // too small => cancel
   if (!tempBox || tempBox.w < 12 || tempBox.h < 12) {
     tempBox = null;
     redraw();
@@ -428,7 +425,7 @@ canvas.addEventListener("pointerup", (e) => {
 });
 
 // --------------------------------
-// Double click: lock/unlock + fill cover color
+// double click: lock/unlock + fill cover color
 // --------------------------------
 canvas.addEventListener("dblclick", (e) => {
   const p = pos(e);
@@ -444,7 +441,7 @@ if (b.locked) {
   b.coverAlpha = 1;
   b.coverTarget = 1;
 
-  // Then if you're currently hovering it, let hover logic fade it out
+  // if you're currently hovering it, let hover logic fade it out
   updateHover(p);
 }
 
