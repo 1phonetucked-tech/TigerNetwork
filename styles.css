@@ -71,8 +71,8 @@ html, body {
 
 /* eraser */
 .eraser-tool {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border: 1px solid #fff;
   background:
     center / 18px 18px no-repeat url("./eraser.webp"),
@@ -95,8 +95,8 @@ html, body {
 
 /* rgb */
 .color-tool {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   border: 1px solid #fff;
   background: #000;
