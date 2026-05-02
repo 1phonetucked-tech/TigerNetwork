@@ -1,14 +1,17 @@
 /* ===== RESET ===== */
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 html, body {
   margin: 0;
   height: 100%;
   background: #fff;
+  cursor: none; /* hide system cursor */
 }
 
 /* ===== CANVAS ===== */
-#canvas{
+#canvas {
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -16,11 +19,6 @@ html, body {
   display: block;
   z-index: 1;
   touch-action: none; /* key for pointer drawing */
-}
-
-/* Hide system cursor */
-html, body {
-  cursor: none;
 }
 
 /* ===== HEADER ===== */
@@ -36,38 +34,48 @@ html, body {
   opacity: 0.9;
 }
 
-/* ===== TOOLBAR ===== */
+/* ===== TOOLBAR (UNDER LOGO) ===== */
 .tools {
   position: fixed;
-  top: 14px;
-  left: 14px;
+  top: 150px;          /* below logo */
+  right: 18px;         /* align with logo */
   display: flex;
   flex-direction: column;
   gap: 10px;
   z-index: 2000;
 }
 
-/* base tool */
+/* ===== TOOL BUTTONS ===== */
 .tool {
   width: 32px;
   height: 32px;
-  border: 1px solid #aaa;
-  background: #f2f2f2;
+  border: 1px solid #fff; /* white outline */
+  background: #000;       /* black box */
+  color: #fff;            /* white icon text */
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 16px;
   cursor: pointer;
 }
 
-.tool.active {
-  background: #d8d8d8;
+.tool:hover {
+  background: #111;
 }
 
+.tool.active {
+  background: #222;
+  border-color: #fff;
+}
+
+/* ===== ERASER TOOL ===== */
 .eraser-tool {
   width: 32px;
   height: 32px;
-  border: none;
-  background: center / contain no-repeat url("./eraser.webp");
+  border: 1px solid #fff;
+  background:
+    center / 18px 18px no-repeat url("./eraser.webp"),
+    #000;
   position: relative;
   cursor: pointer;
 }
@@ -84,14 +92,24 @@ html, body {
   pointer-events: none;
 }
 
-
 /* ===== COLOR PICKER ===== */
 .color-tool {
   width: 32px;
   height: 32px;
   padding: 0;
+  border: 1px solid #fff;
+  background: #000;
 }
 
-.color-tool::-webkit-color-swatch-wrapper { padding: 0; }
-.color-tool::-webkit-color-swatch { border: none; }
-.color-tool::-moz-color-swatch { border: none; }
+/* remove default picker chrome */
+.color-tool::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-tool::-webkit-color-swatch {
+  border: none;
+}
+
+.color-tool::-moz-color-swatch {
+  border: none;
+}
