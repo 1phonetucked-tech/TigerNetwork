@@ -10,7 +10,7 @@ html, body {
   cursor: none; /* hide system cursor */
 }
 
-/* ===== CANVAS ===== */
+/* canvas */
 #canvas {
   position: fixed;
   inset: 0;
@@ -21,7 +21,7 @@ html, body {
   touch-action: none; /* key for pointer drawing */
 }
 
-/* ===== HEADER ===== */
+/* header */
 .tn-header {
   position: fixed;
   top: 18px;
@@ -34,18 +34,18 @@ html, body {
   opacity: 0.9;
 }
 
-/* ===== TOOLBAR (UNDER LOGO) ===== */
+/* toolbar */
 .tools {
   position: fixed;
   top: 150px;          /* below logo */
-  right: 18px;         /* align with logo */
+  right: 10px;         /* align with logo */
   display: flex;
   flex-direction: column;
   gap: 10px;
   z-index: 2000;
 }
 
-/* ===== TOOL BUTTONS ===== */
+/* buttons */
 .tool {
   width: 32px;
   height: 32px;
@@ -68,7 +68,7 @@ html, body {
   border-color: #fff;
 }
 
-/* ===== ERASER TOOL ===== */
+/* eraser */
 .eraser-tool {
   width: 32px;
   height: 32px;
@@ -92,7 +92,7 @@ html, body {
   pointer-events: none;
 }
 
-/* ===== COLOR PICKER ===== */
+/* rgb */
 .color-tool {
   width: 32px;
   height: 32px;
