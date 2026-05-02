@@ -399,8 +399,11 @@ canvas.addEventListener("pointerup", (e) => {
     return;
   }
 
+  
   const t = prompt("Add text:");
-  const txt = t ? `${t}\n${nowStamp()}` : "";
+  if (!t) return;
+
+  const txt = `${t}\n${USER_TAG} ${nowStamp()}`;
 
   const id =
     crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
