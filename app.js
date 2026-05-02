@@ -113,6 +113,32 @@ function lerp(a, b, t) {
   return a + (b - a) * t;
 }
 
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(" ");
+  let line = "";
+  let ty = y;
+
+  for (let i = 0; i < words.length; i++) {
+    const testLine = line + words[i] + " ";
+    const metrics = ctx.measureText(testLine);
+
+    if (metrics.width > maxWidth && line !== "") {
+      ctx.fillText(line, x, ty);
+      line = words[i] + " ";
+      ty += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+
+  if (line) {
+    ctx.fillText(line, x, ty);
+    ty += lineHeight;
+  }
+
+  return ty;
+}
+
 // --------------------------------
 // Animation loop (for hover reveal fade)
 // --------------------------------
@@ -183,27 +209,26 @@ function redraw() {
       ctx.restore();
     }
 
-   // Text
+// text (wrapped inside box)
 if (b.text) {
   ctx.save();
+
+  const padding = 8;
+  const maxWidth = b.w - padding * 2;
+  let ty = b.y + 20;
+
   const lines = b.text.split("\n");
-  let ty = b.y + 18;
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    // Metadata line: "@x date time"
+  for (const line of lines) {
     if (line.startsWith("@")) {
       ctx.font = "12px sans-serif";
-      ctx.fillStyle = "#777"; // lighter gray
+      ctx.fillStyle = "#777";
+      ty = wrapText(ctx, line, b.x + padding, ty, maxWidth, 14);
     } else {
-      // Main content
       ctx.font = "14px sans-serif";
       ctx.fillStyle = "#000";
+      ty = wrapText(ctx, line, b.x + padding, ty, maxWidth, 18);
     }
-
-    ctx.fillText(line, b.x + 6, ty);
-    ty += 16;
   }
 
   ctx.restore();
