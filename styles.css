@@ -37,7 +37,7 @@ html, body {
 /* toolbar */
 .tools {
   position: fixed;
-  top: 150px;          /* below logo */
+  top: 200px;          /* below logo */
   right: 10px;         /* align with logo */
   display: flex;
   flex-direction: column;
