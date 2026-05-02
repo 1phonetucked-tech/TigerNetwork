@@ -29,24 +29,16 @@ html, body {
   z-index: 3000;
 }
 
-.tn-logo {
-  max-width: 120px;
-  opacity: 0.9;
-}
-
-/* aligned toolbar  */
+/* toolbar */
 .tools {
-  position: fixed;
-  top: 118px;        /* tighter under logo */
-  right: 10px;       /* pull tools closer to logo silhouette */
+  margin-top: 10px;          /* space below logo */
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 2000;
-
+  align-items: flex-end;     /* align under logo visually */
 }
 
-/* TOOL BUTTONS */
+/* buttons */
 .tool {
   width: 32px;
   height: 32px;
@@ -69,7 +61,7 @@ html, body {
   border-color: #fff;
 }
 
-/* ===== ERASER TOOL ===== */
+/* eraser */
 .eraser-tool {
   width: 32px;
   height: 32px;
