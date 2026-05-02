@@ -38,7 +38,7 @@ html, body {
 .tools {
   position: fixed;
   top: 200px;          /* below logo */
-  right: 30px;         /* align with logo */
+  right: 40px;         /* align with logo */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -47,8 +47,8 @@ html, body {
 
 /* buttons */
 .tool {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   font-size: 18px
   border: 1px solid #fff; /* white outline */
   background: #000;       /* black box */
@@ -71,8 +71,8 @@ html, body {
 
 /* eraser */
 .eraser-tool {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border: 1px solid #fff;
   background:
     center / 18px 18px no-repeat url("./eraser.webp"),
@@ -95,8 +95,8 @@ html, body {
 
 /* rgb */
 .color-tool {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   padding: 0;
   border: 1px solid #fff;
   background: #000;
