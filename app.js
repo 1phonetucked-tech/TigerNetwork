@@ -183,19 +183,32 @@ function redraw() {
       ctx.restore();
     }
 
-    // Text
-    if (b.text) {
-      ctx.save();
-      ctx.fillStyle = "#000";
+   // Text
+if (b.text) {
+  ctx.save();
+  const lines = b.text.split("\n");
+  let ty = b.y + 18;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Metadata line: "@x date time"
+    if (line.startsWith("@")) {
+      ctx.font = "12px sans-serif";
+      ctx.fillStyle = "#777"; // lighter gray
+    } else {
+      // Main content
       ctx.font = "14px sans-serif";
-      const lines = b.text.split("\n");
-      let ty = b.y + 18;
-      for (const line of lines) {
-        ctx.fillText(line, b.x + 6, ty);
-        ty += 16;
-      }
-      ctx.restore();
+      ctx.fillStyle = "#000";
     }
+
+    ctx.fillText(line, b.x + 6, ty);
+    ty += 16;
+  }
+
+  ctx.restore();
+}
+  
 
     ctx.restore(); // end clip
 
