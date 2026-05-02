@@ -30,14 +30,14 @@ html, body {
 }
 
 .tn-logo {
-  max-width: 120px;
+  max-width: 125px;
   opacity: 0.9;
 }
 
 /* toolbar */
 .tools {
   position: fixed;
-  top: 200px;          /* below logo */
+  top: 150px;          /* below logo */
   right: 40px;         /* align with logo */
   display: flex;
   flex-direction: column;
