@@ -27,6 +27,11 @@ html, body {
   top: 18px;
   right: 18px;
   z-index: 3000;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* THIS IS THE KEY */
+
 }
 
 /* toolbar */
