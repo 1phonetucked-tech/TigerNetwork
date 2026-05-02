@@ -18,32 +18,34 @@ html, body {
   height: 100vh;
   display: block;
   z-index: 1;
-  touch-action: none; /* for pointer drawing */
+  touch-action: none; /* key for pointer drawing */
 }
 
-/* header */
+/* ===== HEADER ===== */
 .tn-header {
   position: fixed;
   top: 18px;
   right: 18px;
   z-index: 3000;
-  
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end; /* THIS IS THE KEY */
-
 }
 
-/* toolbar */
+.tn-logo {
+  max-width: 120px;
+  opacity: 0.9;
+}
+
+/* ===== TOOLBAR (UNDER LOGO) ===== */
 .tools {
-  margin-top: 10px;          /* space below logo */
+  position: fixed;
+  top: 150px;          /* below logo */
+  right: 18px;         /* align with logo */
   display: flex;
   flex-direction: column;
   gap: 10px;
-  align-items: flex-end;     /* align under logo visually */
+  z-index: 2000;
 }
 
-/* buttons */
+/* ===== TOOL BUTTONS ===== */
 .tool {
   width: 32px;
   height: 32px;
@@ -66,7 +68,7 @@ html, body {
   border-color: #fff;
 }
 
-/* eraser */
+/* ===== ERASER TOOL ===== */
 .eraser-tool {
   width: 32px;
   height: 32px;
@@ -90,7 +92,7 @@ html, body {
   pointer-events: none;
 }
 
-/* rgb */
+/* ===== COLOR PICKER ===== */
 .color-tool {
   width: 32px;
   height: 32px;
