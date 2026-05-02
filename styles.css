@@ -47,8 +47,9 @@ html, body {
 
 /* buttons */
 .tool {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
+  font-size: 18px
   border: 1px solid #fff; /* white outline */
   background: #000;       /* black box */
   color: #fff;            /* white icon text */
