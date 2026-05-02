@@ -18,10 +18,10 @@ html, body {
   height: 100vh;
   display: block;
   z-index: 1;
-  touch-action: none; /* key for pointer drawing */
+  touch-action: none; /* for pointer drawing */
 }
 
-/* ===== HEADER ===== */
+/* header */
 .tn-header {
   position: fixed;
   top: 18px;
@@ -34,18 +34,17 @@ html, body {
   opacity: 0.9;
 }
 
-/* ===== TOOLBAR (UNDER LOGO) ===== */
+/* toolbar */
 .tools {
   position: fixed;
-  top: 150px;          /* below logo */
-  right: 18px;         /* align with logo */
+  top: 120px;      /* tighter under logo */
+  right: 22px;     /* visually centered under logo */
   display: flex;
   flex-direction: column;
   gap: 10px;
   z-index: 2000;
 }
-
-/* ===== TOOL BUTTONS ===== */
+/* TOOL BUTTONS */
 .tool {
   width: 32px;
   height: 32px;
@@ -92,7 +91,7 @@ html, body {
   pointer-events: none;
 }
 
-/* ===== COLOR PICKER ===== */
+/* rgb */
 .color-tool {
   width: 32px;
   height: 32px;
