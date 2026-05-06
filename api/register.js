@@ -1,13 +1,15 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  // Atomically increment — safe if two people log on at the same time
-  const userNumber = await kv.incr('tigernetwork:user_counter');
-
-  // Store permanently (no expiry — their number is theirs forever)
-  await kv.set(`user:${userNumber}`, { created: Date.now() });
+  const userNumber = await redis.incr('tigernetwork:user_counter');
+  await redis.set(`user:${userNumber}`, { created: Date.now() });
 
   res.status(200).json({ username: String(userNumber) });
 }
